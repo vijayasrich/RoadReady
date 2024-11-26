@@ -1,4 +1,4 @@
-﻿using System;
+﻿/*using System;
 using System.Collections.Generic;
 
 namespace RoadReady.Models
@@ -12,3 +12,4 @@ namespace RoadReady.Models
         public virtual CarExtra? CarExtra { get; set; }
     }
 }
+*/

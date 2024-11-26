@@ -231,27 +231,6 @@ namespace RoadReady.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "AdminActions",
-                columns: table => new
-                {
-                    action_id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    admin_id = table.Column<int>(type: "int", nullable: true),
-                    action_type = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
-                    action_description = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    action_date = table.Column<DateTime>(type: "datetime2", nullable: true, defaultValueSql: "(sysdatetime())")
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK__AdminAct__74EFC21733B8F713", x => x.action_id);
-                    table.ForeignKey(
-                        name: "FK__AdminActi__admin__571DF1D5",
-                        column: x => x.admin_id,
-                        principalTable: "Users",
-                        principalColumn: "user_id");
-                });
-
-            migrationBuilder.CreateTable(
                 name: "PasswordResets",
                 columns: table => new
                 {
@@ -278,14 +257,14 @@ namespace RoadReady.Migrations
                 {
                     reservation_id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    user_id = table.Column<int>(type: "int", nullable: true),
-                    car_id = table.Column<int>(type: "int", nullable: true),
+                    user_id = table.Column<int>(type: "int", nullable: false),
+                    car_id = table.Column<int>(type: "int", nullable: false),
                     pickup_date = table.Column<DateTime>(type: "datetime2", nullable: false),
                     dropoff_date = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    total_price = table.Column<decimal>(type: "decimal(10,2)", nullable: true),
+                    total_price = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
                     status = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: true, defaultValueSql: "('pending')"),
-                    created_at = table.Column<DateTime>(type: "datetime2", nullable: true, defaultValueSql: "(sysdatetime())"),
-                    updated_at = table.Column<DateTime>(type: "datetime2", nullable: true, defaultValueSql: "(sysdatetime())")
+                    created_at = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "(sysdatetime())"),
+                    updated_at = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "(sysdatetime())")
                 },
                 constraints: table =>
                 {
@@ -294,12 +273,14 @@ namespace RoadReady.Migrations
                         name: "FK__Reservati__car_i__46E78A0C",
                         column: x => x.car_id,
                         principalTable: "Cars",
-                        principalColumn: "car_id");
+                        principalColumn: "car_id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK__Reservati__user___45F365D3",
                         column: x => x.user_id,
                         principalTable: "Users",
-                        principalColumn: "user_id");
+                        principalColumn: "user_id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -330,27 +311,6 @@ namespace RoadReady.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "UserAudit",
-                columns: table => new
-                {
-                    audit_id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    user_id = table.Column<int>(type: "int", nullable: true),
-                    action = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
-                    action_time = table.Column<DateTime>(type: "datetime2", nullable: true, defaultValueSql: "(sysdatetime())"),
-                    details = table.Column<string>(type: "nvarchar(max)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK__UserAudi__5AF33E33E1A9B2CA", x => x.audit_id);
-                    table.ForeignKey(
-                        name: "FK__UserAudit__user___5AEE82B9",
-                        column: x => x.user_id,
-                        principalTable: "Users",
-                        principalColumn: "user_id");
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Payments",
                 columns: table => new
                 {
@@ -373,7 +333,7 @@ namespace RoadReady.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ReservationExtras",
+                name: "ReservationCarExtras",
                 columns: table => new
                 {
                     reservation_id = table.Column<int>(type: "int", nullable: false),
@@ -381,23 +341,20 @@ namespace RoadReady.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK__Reservat__743D5ED3F8B8837F", x => new { x.reservation_id, x.extra_id });
+                    table.PrimaryKey("PK_ReservationCarExtras", x => new { x.reservation_id, x.extra_id });
                     table.ForeignKey(
-                        name: "FK_ReservationExtra_CarExtra",
+                        name: "FK_ReservationCarExtras_CarExtras_extra_id",
                         column: x => x.extra_id,
                         principalTable: "CarExtras",
-                        principalColumn: "extra_id");
+                        principalColumn: "extra_id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_ReservationExtra_Reservation",
+                        name: "FK_ReservationCarExtras_Reservations_reservation_id",
                         column: x => x.reservation_id,
                         principalTable: "Reservations",
-                        principalColumn: "reservation_id");
+                        principalColumn: "reservation_id",
+                        onDelete: ReferentialAction.Cascade);
                 });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_AdminActions_admin_id",
-                table: "AdminActions",
-                column: "admin_id");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -449,8 +406,8 @@ namespace RoadReady.Migrations
                 column: "reservation_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ReservationExtras_extra_id",
-                table: "ReservationExtras",
+                name: "IX_ReservationCarExtras_extra_id",
+                table: "ReservationCarExtras",
                 column: "extra_id");
 
             migrationBuilder.CreateIndex(
@@ -474,11 +431,6 @@ namespace RoadReady.Migrations
                 column: "user_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserAudit_user_id",
-                table: "UserAudit",
-                column: "user_id");
-
-            migrationBuilder.CreateIndex(
                 name: "UQ__Users__AB6E6164C3748354",
                 table: "Users",
                 column: "email",
@@ -488,9 +440,6 @@ namespace RoadReady.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "AdminActions");
-
             migrationBuilder.DropTable(
                 name: "AdminDashboardData");
 
@@ -516,13 +465,10 @@ namespace RoadReady.Migrations
                 name: "Payments");
 
             migrationBuilder.DropTable(
-                name: "ReservationExtras");
+                name: "ReservationCarExtras");
 
             migrationBuilder.DropTable(
                 name: "Reviews");
-
-            migrationBuilder.DropTable(
-                name: "UserAudit");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");

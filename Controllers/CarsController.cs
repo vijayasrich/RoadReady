@@ -2,9 +2,10 @@
 using Microsoft.AspNetCore.Mvc;
 using RoadReady.Models;
 using RoadReady.Repositories;
-
+using RoadReady.Models.DTO;
 using Microsoft.AspNetCore.Authorization;
 using RoadReady.Exceptions;
+using AutoMapper;
 
 namespace RoadReady.Controllers
 {
@@ -13,21 +14,23 @@ namespace RoadReady.Controllers
     public class CarsController : ControllerBase
     {
         private readonly ICarRepository _carRepository;
+        private readonly IMapper _mapper;
 
-        public CarsController(ICarRepository carRepository)
+        public CarsController(ICarRepository carRepository, IMapper mapper)
         {
             _carRepository = carRepository;
+            _mapper = mapper;
         }
 
-       
         [HttpGet]
         [Authorize(Roles = "Admin,Customer,Agent")]
-        public async Task<ActionResult<IEnumerable<Car>>> GetAllCars()
+        public async Task<ActionResult<IEnumerable<CarDTO>>> GetAllCars()
         {
             try
             {
                 var cars = await _carRepository.GetAllCarsAsync();
-                return Ok(cars);
+                var carDTOs = _mapper.Map<IEnumerable<CarDTO>>(cars);
+                return Ok(carDTOs);
             }
             catch (InternalServerException ex)
             {
@@ -39,10 +42,9 @@ namespace RoadReady.Controllers
             }
         }
 
-        
         [HttpGet("{id}")]
         [Authorize(Roles = "Admin,Customer,Agent")]
-        public async Task<ActionResult<Car>> GetCarById(int id)
+        public async Task<ActionResult<CarDTO>> GetCarById(int id)
         {
             try
             {
@@ -50,7 +52,8 @@ namespace RoadReady.Controllers
                 if (car == null)
                     throw new NotFoundException("Car not found.");
 
-                return Ok(car);
+                var carDTO = _mapper.Map<CarDTO>(car);
+                return Ok(carDTO);
             }
             catch (NotFoundException ex)
             {
@@ -66,18 +69,20 @@ namespace RoadReady.Controllers
             }
         }
 
-        
         [HttpPost]
         [Authorize(Roles = "Admin,Agent")]
-        public async Task<IActionResult> AddCar([FromBody] Car car)
+        public async Task<IActionResult> AddCar([FromBody] CarDTO carDTO)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
             try
             {
+                var car = _mapper.Map<Car>(carDTO);
                 await _carRepository.AddCarAsync(car);
-                return CreatedAtAction(nameof(GetCarById), new { id = car.CarId }, car);
+                var createdCarDTO = _mapper.Map<CarDTO>(car);
+
+                return CreatedAtAction(nameof(GetCarById), new { id = car.CarId }, createdCarDTO);
             }
             catch (DuplicateResourceException ex)
             {
@@ -97,18 +102,18 @@ namespace RoadReady.Controllers
             }
         }
 
-        
         [HttpPut("{id}")]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> UpdateCar(int id, [FromBody] Car car)
+        public async Task<IActionResult> UpdateCar(int id, [FromBody] CarDTO carDTO)
         {
-            if (id != car.CarId)
+            if (id != carDTO.CarId)
                 return BadRequest(new { message = "ID in URL does not match ID in body." });
 
             try
             {
+                var car = _mapper.Map<Car>(carDTO);
                 await _carRepository.UpdateCarAsync(car);
-                return Ok(new { message = $"ID {id} has been updated." });
+                return Ok(new { message = $"Car with ID {id} has been updated." });
             }
             catch (NotFoundException ex)
             {
@@ -135,7 +140,7 @@ namespace RoadReady.Controllers
             try
             {
                 await _carRepository.DeleteCarAsync(id);
-                return Ok(new { message = $"ID {id} has been deleted." });
+                return Ok(new { message = $"Car with ID {id} has been deleted." });
             }
             catch (NotFoundException ex)
             {
@@ -152,5 +157,6 @@ namespace RoadReady.Controllers
         }
     }
 }
+
 
 

@@ -7,6 +7,7 @@ using RoadReady.Authentication;
 using RoadReady.Models;
 using RoadReady.Repositories;
 using System.Text;
+using AutoMapper;
 
 namespace RoadReady
 {
@@ -18,14 +19,12 @@ namespace RoadReady
 
             // Add services to the container.
             builder.Services.AddDbContext<RoadReadyContext>(options =>
-   options.UseSqlServer(builder.Configuration.GetConnectionString("RoadReadyConnectionString")));
-           
+                options.UseSqlServer(builder.Configuration.GetConnectionString("RoadReadyConnectionString")));
 
             builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
-    .AddEntityFrameworkStores<RoadReadyContext>()
-    .AddDefaultTokenProviders();
+                .AddEntityFrameworkStores<RoadReadyContext>()
+                .AddDefaultTokenProviders();
 
-            
             builder.Services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -45,19 +44,20 @@ namespace RoadReady
                 };
             });
 
+            // Register Repositories
             builder.Services.AddScoped<ICarRepository, CarRepository>();
             builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddScoped<IReservationRepository, ReservationRepository>();
             builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
             builder.Services.AddScoped<IPasswordResetRepository, PasswordResetRepository>();
             builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
-            builder.Services.AddScoped<IAdminActionsRepository, AdminActionsRepository>();
             builder.Services.AddScoped<IAdminDashboardDataRepository, AdminDashboardDataRepository>();
-            builder.Services.AddScoped<IUserAuditRepository, UserAuditRepository>();
             builder.Services.AddScoped<ICarExtraRepository, CarExtraRepository>();
-            builder.Services.AddScoped<IReservationExtraRepository, ReservationExtraRepository>();
 
-            builder.Services.AddControllers();
+            // Add AutoMapper
+            builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly); // Register AutoMapper Profile
+
+            // Add Controllers and Swagger
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(c =>
@@ -72,21 +72,21 @@ namespace RoadReady
                     Scheme = "bearer"
                 });
                 c.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
-        {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference
                 {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = "Bearer"
-                }
-            },
-            new string[] { }
-        }
-    });
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            }
+                        },
+                        new string[] { }
+                    }
+                });
             });
-            
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -98,10 +98,8 @@ namespace RoadReady
 
             app.UseHttpsRedirection();
 
-           
             app.UseAuthentication();
             app.UseAuthorization();
-
 
             app.MapControllers();
 

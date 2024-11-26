@@ -1,11 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using RoadReady.Models;
+using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 using RoadReady.Authentication;
-using RoadReady.Exceptions;
-using RoadReady.Models;
 
 namespace RoadReady.Repositories
 {
-    public class PasswordResetRepository: IPasswordResetRepository
+    public class PasswordResetRepository : IPasswordResetRepository
     {
         private readonly RoadReadyContext _context;
 
@@ -14,43 +14,35 @@ namespace RoadReady.Repositories
             _context = context;
         }
 
-        public async Task<PasswordReset> GetPasswordResetByTokenAsync(string token)
+        // Get PasswordReset by ID
+        public async Task<PasswordReset> GetPasswordResetByIdAsync(int id)
         {
             return await _context.PasswordResets
-                                 .FirstOrDefaultAsync(pr => pr.Token == token);
+                                 .FirstOrDefaultAsync(pr => pr.ResetId == id);
         }
 
+        // Add a new PasswordReset record
         public async Task AddPasswordResetAsync(PasswordReset passwordReset)
         {
             await _context.PasswordResets.AddAsync(passwordReset);
             await _context.SaveChangesAsync();
         }
 
-
+        // Update an existing PasswordReset record
         public async Task UpdatePasswordResetAsync(PasswordReset passwordReset)
         {
-            var existingReset = await _context.PasswordResets.FindAsync(passwordReset.ResetId);
-            if (existingReset == null)
-            {
-                throw new NotFoundException($"Password reset with ID {passwordReset.ResetId} was not found.");
-            }
-
-            // Update properties selectively if needed
-            existingReset.Token = passwordReset.Token;
-            existingReset.RequestTime = passwordReset.RequestTime;
-            existingReset.ResetTime = passwordReset.ResetTime;
-
-            _context.PasswordResets.Update(existingReset);
+            _context.PasswordResets.Update(passwordReset);
             await _context.SaveChangesAsync();
         }
 
-
-        public async Task DeletePasswordResetAsync(string token)
+        // Delete a PasswordReset record by ID
+        public async Task DeletePasswordResetAsync(int id)
         {
-            var reset = await GetPasswordResetByTokenAsync(token);
-            if (reset != null)
+            var passwordReset = await _context.PasswordResets
+                                               .FirstOrDefaultAsync(pr => pr.ResetId == id);
+            if (passwordReset != null)
             {
-                _context.PasswordResets.Remove(reset);
+                _context.PasswordResets.Remove(passwordReset);
                 await _context.SaveChangesAsync();
             }
         }

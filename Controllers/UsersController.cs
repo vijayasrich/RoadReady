@@ -1,28 +1,31 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RoadReady.Exceptions;
 using RoadReady.Models;
+using RoadReady.Models.DTO;
 using RoadReady.Repositories;
 
 namespace RoadReady.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize]  
+    //[Authorize]
     public class UserController : ControllerBase
     {
         private readonly IUserRepository _userRepository;
         private readonly ILogger<UserController> _logger;
+        private readonly IMapper _mapper;
 
-        public UserController(IUserRepository userRepository, ILogger<UserController> logger)
+        public UserController(IUserRepository userRepository, ILogger<UserController> logger, IMapper mapper)
         {
             _userRepository = userRepository;
             _logger = logger;
+            _mapper = mapper;
         }
 
-
+        // GET: api/User
         [HttpGet]
         [Authorize(Roles = "Admin,Agent")]
         public async Task<IActionResult> GetAllUsers()
@@ -30,23 +33,29 @@ namespace RoadReady.Controllers
             try
             {
                 var users = await _userRepository.GetAllUsersAsync();
+
                 if (users == null || !users.Any())
                 {
                     return NotFound("No users found.");
                 }
+
                 if (User.IsInRole("Agent"))
                 {
                     // Filter data for agents
-                    var limitedUsers = users.Select(u => new
-                    {
-                        u.FirstName,
-                        u.LastName,
-                        u.Email,
-                        u.PhoneNumber
-                    });
-                    return Ok(limitedUsers);
+                    var limitedUsersDto = _mapper.Map<IEnumerable<Models.DTO.UserDTO>>(users)
+                        .Select(u => new
+                        {
+                            u.FirstName,
+                            u.LastName,
+                            u.Email,
+                            u.PhoneNumber
+                        });
+
+                    return Ok(limitedUsersDto);
                 }
-                return Ok(users);
+
+                var usersDto = _mapper.Map<IEnumerable<Models.DTO.UserDTO>>(users);
+                return Ok(usersDto);
             }
             catch (Exception ex)
             {
@@ -55,7 +64,7 @@ namespace RoadReady.Controllers
             }
         }
 
-
+        // GET: api/User/{id}
         [HttpGet("{id}")]
         [Authorize(Roles = "Admin,Agent,Customer")]
         public async Task<IActionResult> GetUserById(int id)
@@ -63,23 +72,27 @@ namespace RoadReady.Controllers
             try
             {
                 var user = await _userRepository.GetUserByIdAsync(id);
+
                 if (user == null)
                 {
                     return NotFound($"User with ID {id} not found.");
                 }
+
                 if (User.IsInRole("Agent"))
                 {
-                    //return limited data for agents
-                    return Ok(new
+                    var limitedUserDto = new
                     {
                         user.FirstName,
                         user.LastName,
                         user.Email,
                         user.PhoneNumber
-                    });
+                    };
 
+                    return Ok(limitedUserDto);
                 }
-                return Ok(user);
+
+                var userDto = _mapper.Map<Models.DTO.UserDTO>(user);
+                return Ok(userDto);
             }
             catch (Exception ex)
             {
@@ -88,17 +101,20 @@ namespace RoadReady.Controllers
             }
         }
 
-
+        // POST: api/User
         [HttpPost]
         [Authorize(Roles = "Admin,Customer")]
-        public async Task<IActionResult> CreateUser([FromBody] User user)
+        public async Task<IActionResult> CreateUser([FromBody] Models.DTO.UserDTO userDto)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
             try
             {
+                var user = _mapper.Map<User>(userDto);
                 await _userRepository.AddUserAsync(user);
-                return CreatedAtAction(nameof(GetUserById), new { id = user.UserId }, user);
+
+                var createdUserDto = _mapper.Map<Models.DTO.UserDTO>(user);
+                return CreatedAtAction(nameof(GetUserById), new { id = user.UserId }, createdUserDto);
             }
             catch (Exception ex)
             {
@@ -107,17 +123,25 @@ namespace RoadReady.Controllers
             }
         }
 
-
+        // PUT: api/User/{id}
         [HttpPut("{id}")]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> UpdateUser(int id, [FromBody] User user)
+        public async Task<IActionResult> UpdateUser(int id, [FromBody] Models.DTO.UserDTO userDto)
         {
-            if (id != user.UserId) return BadRequest("User ID mismatch.");
+            if (id != userDto.UserId) return BadRequest("User ID mismatch.");
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
             try
             {
-                await _userRepository.UpdateUserAsync(user);
+                var existingUser = await _userRepository.GetUserByIdAsync(id);
+                if (existingUser == null)
+                {
+                    return NotFound($"User with ID {id} not found.");
+                }
+
+                var updatedUser = _mapper.Map(userDto, existingUser);
+                await _userRepository.UpdateUserAsync(updatedUser);
+
                 return Ok(new { message = $"User with ID {id} has been updated." });
             }
             catch (Exception ex)
@@ -127,38 +151,34 @@ namespace RoadReady.Controllers
             }
         }
 
-
+        // DELETE: api/User/{id}
         [HttpDelete("{id}")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteUser(int id)
         {
             try
             {
-                // Fetch the user by ID
                 var user = await _userRepository.GetUserByIdAsync(id);
 
-                // Handle the case where user doesn't exist
                 if (user == null)
                 {
                     _logger.LogWarning($"User with ID {id} was not found.");
                     return NotFound(new { message = $"User with ID {id} was not found." });
                 }
 
-                // Proceed with deletion
                 await _userRepository.DeleteUserAsync(id);
 
                 _logger.LogInformation($"User with ID {id} successfully deleted.");
-                return Ok(new { message = $"User with ID {id} has been deleted." }); ; // Return 204 No Content
+                return Ok(new { message = $"User with ID {id} has been deleted." });
             }
             catch (NotFoundException ex)
             {
                 _logger.LogWarning(ex, ex.Message);
-                return NotFound(new { message = ex.Message }); // Return 404 if user is not found
+                return NotFound(new { message = ex.Message });
             }
             catch (DbUpdateException dbEx)
             {
                 _logger.LogError(dbEx, $"Database update error while deleting the user with ID {id}.");
-
                 return StatusCode(500, new { message = "Database error occurred.", details = dbEx.Message });
             }
             catch (Exception ex)
@@ -167,6 +187,6 @@ namespace RoadReady.Controllers
                 return StatusCode(500, new { message = "An unexpected error occurred.", details = ex.Message });
             }
         }
-
     }
 }
+

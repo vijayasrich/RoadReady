@@ -17,36 +17,79 @@ public class ReservationRepository : IReservationRepository
 
     public async Task<Reservation> GetReservationByIdAsync(int id)
     {
-        return await _context.Reservations.FindAsync(id);
+        return await _context.Reservations
+                         .Include(r => r.Extras)  // Include the CarExtras in the query
+                         .FirstOrDefaultAsync(r => r.ReservationId == id);
     }
 
     public async Task<IEnumerable<Reservation>> GetAllReservationsAsync()
     {
-        return await _context.Reservations.ToListAsync();
+        return await _context.Reservations
+           .Include(r => r.Extras) // Include CarExtras for each reservation
+           .ToListAsync();
     }
 
     public async Task AddReservationAsync(Reservation reservation)
     {
+        // Load CarExtras based on the CarExtraIds
+        if (reservation.CarExtraIds != null && reservation.CarExtraIds.Any())
+        {
+            var selectedExtras = await _context.CarExtras
+                                               .Where(extra => reservation.CarExtraIds.Contains(extra.ExtraId))
+                                               .ToListAsync();
+
+            // Add the selected CarExtras to the reservation
+            foreach (var extra in selectedExtras)
+            {
+                reservation.Extras.Add(extra);
+            }
+        }
+
         await _context.Reservations.AddAsync(reservation);
         await _context.SaveChangesAsync();
     }
 
+
     public async Task UpdateReservationAsync(Reservation reservation)
     {
-        // Check if a conflicting entity is already tracked
-        var trackedEntity = _context.ChangeTracker.Entries<Reservation>()
-                                    .FirstOrDefault(e => e.Entity.ReservationId == reservation.ReservationId);
+        // Retrieve the existing reservation
+        var existingReservation = await _context.Reservations
+                                                 .Include(r => r.Extras) // Load existing extras
+                                                 .FirstOrDefaultAsync(r => r.ReservationId == reservation.ReservationId);
 
-        if (trackedEntity != null)
+        if (existingReservation == null)
         {
-            // Detach the tracked entity to avoid conflicts
-            trackedEntity.State = EntityState.Detached;
+            throw new Exception("Reservation not found.");
         }
 
-        // Update the reservation
-        _context.Reservations.Update(reservation);
+        // Remove existing CarExtras not in the new CarExtraIds list
+        var extrasToRemove = existingReservation.Extras
+                                               .Where(extra => !reservation.CarExtraIds.Contains(extra.ExtraId))
+                                               .ToList();
 
-        // Save changes to the database
+        foreach (var extra in extrasToRemove)
+        {
+            existingReservation.Extras.Remove(extra);
+        }
+
+        // Add new CarExtras that are not in the existing list
+        var extrasToAdd = await _context.CarExtras
+                                         .Where(extra => reservation.CarExtraIds.Contains(extra.ExtraId) &&
+                                                        !existingReservation.Extras.Any(e => e.ExtraId == extra.ExtraId))
+                                         .ToListAsync();
+
+        foreach (var extra in extrasToAdd)
+        {
+            existingReservation.Extras.Add(extra);
+        }
+
+        // Update other fields if necessary
+        existingReservation.PickupDate = reservation.PickupDate;
+        existingReservation.DropoffDate = reservation.DropoffDate;
+        existingReservation.Status = reservation.Status;
+        existingReservation.TotalPrice = reservation.TotalPrice;
+
+        // Save the changes
         await _context.SaveChangesAsync();
     }
 

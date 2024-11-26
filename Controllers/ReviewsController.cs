@@ -1,29 +1,32 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using RoadReady.Models;
+using RoadReady.Models.DTO;
 using RoadReady.Repositories;
 
 namespace RoadReady.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize] 
     public class ReviewsController : ControllerBase
     {
         private readonly IReviewRepository _reviewRepository;
         private readonly ILogger<ReviewsController> _logger;
+        private readonly IMapper _mapper;
 
-        public ReviewsController(IReviewRepository reviewRepository, ILogger<ReviewsController> logger)
+        public ReviewsController(IReviewRepository reviewRepository, ILogger<ReviewsController> logger, IMapper mapper)
         {
             _reviewRepository = reviewRepository;
             _logger = logger;
+            _mapper = mapper;
         }
 
-       
+        // GET: api/Reviews
         [HttpGet]
         [Authorize(Roles = "Admin,Customer,Agent")]
-        public async Task<ActionResult<IEnumerable<Review>>> GetAllReviews()
+        public async Task<ActionResult<IEnumerable<ReviewsDTO>>> GetAllReviews()
         {
             try
             {
@@ -32,57 +35,62 @@ namespace RoadReady.Controllers
                 {
                     return NotFound("No reviews found.");
                 }
-                return Ok(reviews);
+
+                var reviewsDto = _mapper.Map<IEnumerable<ReviewsDTO>>(reviews);
+                return Ok(reviewsDto);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An error occurred while getting all reviews.");
+                _logger.LogError(ex, "An error occurred while retrieving all reviews.");
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
 
-
+        // GET: api/Reviews/ByCar/{carId}
         [HttpGet("ByCar/{carId}")]
         [Authorize(Roles = "Admin,Customer,Agent")]
-        public async Task<ActionResult<Review>> GetReviewByCarId(int carId)
+        public async Task<ActionResult<ReviewsDTO>> GetReviewByCarId(int carId)
         {
             try
             {
-                var review = await _reviewRepository.GetReviewByCarIdAsync(carId); // Update method call
+                var review = await _reviewRepository.GetReviewByCarIdAsync(carId);
                 if (review == null)
                 {
                     return NotFound($"Review for Car ID {carId} not found.");
                 }
-                return Ok(review);
+
+                var reviewDto = _mapper.Map<ReviewsDTO>(review);
+                return Ok(reviewDto);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"An error occurred while getting the review for Car ID {carId}.");
+                _logger.LogError(ex, $"An error occurred while retrieving the review for Car ID {carId}.");
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
 
-
-       
+        // POST: api/Reviews
         [HttpPost]
         [Authorize(Roles = "Customer")]
-        
-        public async Task<IActionResult> AddReview([FromBody] Review review)
+        public async Task<IActionResult> AddReview([FromBody] ReviewsDTO reviewDto)
         {
-            if (review == null)
+            if (reviewDto == null)
             {
                 return BadRequest("Review data is required.");
             }
 
-            if (review.CarId <= 0)
+            if (reviewDto.CarId <= 0)
             {
                 return BadRequest("A valid CarId is required to add a review.");
             }
 
             try
             {
+                var review = _mapper.Map<Review>(reviewDto);
                 await _reviewRepository.AddReviewAsync(review);
-                return CreatedAtAction(nameof(GetReviewByCarId), new { carId = review.CarId }, review); // Redirect to GetReviewByCarId
+                var createdReviewDto = _mapper.Map<ReviewsDTO>(review);
+
+                return CreatedAtAction(nameof(GetReviewByCarId), new { carId = review.CarId }, createdReviewDto);
             }
             catch (Exception ex)
             {
@@ -91,47 +99,48 @@ namespace RoadReady.Controllers
             }
         }
 
-
-
+        // PUT: api/Reviews/ByCar/{carId}
         [HttpPut("ByCar/{carId}")]
         [Authorize(Roles = "Admin,Customer")]
-        public async Task<IActionResult> UpdateReview(int carId, [FromBody] Review review)
+        public async Task<IActionResult> UpdateReview(int carId, [FromBody] ReviewsDTO reviewDto)
         {
-            if (review == null)
+            if (reviewDto == null)
             {
                 return BadRequest("Review data is required.");
             }
 
-            if (carId != review.CarId)
+            if (carId != reviewDto.CarId)
             {
                 return BadRequest("Car ID mismatch.");
             }
 
             try
             {
-                // Retrieve the review by carId and reviewId
                 var existingReview = await _reviewRepository.GetReviewByCarIdAsync(carId);
 
                 if (existingReview == null)
                 {
-                    return NotFound($"Review for car ID {carId} with review ID {review.ReviewId} not found.");
+                    return NotFound($"Review for Car ID {carId} not found.");
                 }
 
-                // Update the review
-                await _reviewRepository.UpdateReviewAsync(review);
-                return Ok(new { message = $"Review for car ID {carId} has been updated." });
+                var updatedReview = _mapper.Map(reviewDto, existingReview);
+                await _reviewRepository.UpdateReviewAsync(updatedReview);
+
+                return Ok(new { message = $"Review for Car ID {carId} has been updated." });
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"An error occurred while updating the review for car ID {carId}.");
+                _logger.LogError(ex, $"An error occurred while updating the review for Car ID {carId}.");
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
+    }
+}
 
 
 
 
-        [HttpDelete("ByCar/{carId}")]
+        /*[HttpDelete("ByCar/{carId}")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteReview(int carId)
         {
@@ -153,10 +162,9 @@ namespace RoadReady.Controllers
                 _logger.LogError(ex, $"An error occurred while deleting the review for Car ID {carId}.");
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
-        }
+        }*/
 
-    }
-}
+    
 
 
 

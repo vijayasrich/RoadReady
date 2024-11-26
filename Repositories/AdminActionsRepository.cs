@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿/*using Microsoft.EntityFrameworkCore;
 using RoadReady.Authentication;
 using RoadReady.Models;
 using RoadReady.Repositories;
@@ -46,5 +46,5 @@ public class AdminActionsRepository : IAdminActionsRepository
             await _context.SaveChangesAsync();
         }
     }
-}
+}*/
 

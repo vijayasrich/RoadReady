@@ -155,6 +155,23 @@ namespace RoadReady.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("ReservationCarExtras", b =>
+                {
+                    b.Property<int>("ReservationId")
+                        .HasColumnType("int")
+                        .HasColumnName("reservation_id");
+
+                    b.Property<int>("ExtraId")
+                        .HasColumnType("int")
+                        .HasColumnName("extra_id");
+
+                    b.HasKey("ReservationId", "ExtraId");
+
+                    b.HasIndex("ExtraId");
+
+                    b.ToTable("ReservationCarExtras", (string)null);
+                });
+
             modelBuilder.Entity("RoadReady.Authentication.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
@@ -218,42 +235,6 @@ namespace RoadReady.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
-                });
-
-            modelBuilder.Entity("RoadReady.Models.AdminActions", b =>
-                {
-                    b.Property<int>("ActionId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("action_id");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ActionId"), 1L, 1);
-
-                    b.Property<DateTime?>("ActionDate")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasColumnName("action_date")
-                        .HasDefaultValueSql("(sysdatetime())");
-
-                    b.Property<string>("ActionDescription")
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("action_description");
-
-                    b.Property<string>("ActionType")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)")
-                        .HasColumnName("action_type");
-
-                    b.Property<int?>("AdminId")
-                        .HasColumnType("int")
-                        .HasColumnName("admin_id");
-
-                    b.HasKey("ActionId")
-                        .HasName("PK__AdminAct__74EFC21733B8F713");
-
-                    b.HasIndex("AdminId");
-
-                    b.ToTable("AdminActions");
                 });
 
             modelBuilder.Entity("RoadReady.Models.AdminDashboardData", b =>
@@ -482,23 +463,21 @@ namespace RoadReady.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ReservationId"), 1L, 1);
 
-                    b.Property<int?>("CarId")
+                    b.Property<int>("CarId")
                         .HasColumnType("int")
                         .HasColumnName("car_id");
 
-                    b.Property<DateTime?>("CreatedAt")
+                    b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
                         .HasColumnName("created_at")
                         .HasDefaultValueSql("(sysdatetime())");
 
-                    b.Property<DateTime?>("DropoffDate")
-                        .IsRequired()
+                    b.Property<DateTime>("DropoffDate")
                         .HasColumnType("datetime2")
                         .HasColumnName("dropoff_date");
 
-                    b.Property<DateTime?>("PickupDate")
-                        .IsRequired()
+                    b.Property<DateTime>("PickupDate")
                         .HasColumnType("datetime2")
                         .HasColumnName("pickup_date");
 
@@ -509,17 +488,17 @@ namespace RoadReady.Migrations
                         .HasColumnName("status")
                         .HasDefaultValueSql("('pending')");
 
-                    b.Property<decimal?>("TotalPrice")
+                    b.Property<decimal>("TotalPrice")
                         .HasColumnType("decimal(10,2)")
                         .HasColumnName("total_price");
 
-                    b.Property<DateTime?>("UpdatedAt")
+                    b.Property<DateTime>("UpdatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
                         .HasColumnName("updated_at")
                         .HasDefaultValueSql("(sysdatetime())");
 
-                    b.Property<int?>("UserId")
+                    b.Property<int>("UserId")
                         .HasColumnType("int")
                         .HasColumnName("user_id");
 
@@ -530,24 +509,6 @@ namespace RoadReady.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Reservations");
-                });
-
-            modelBuilder.Entity("RoadReady.Models.ReservationExtra", b =>
-                {
-                    b.Property<int>("ReservationId")
-                        .HasColumnType("int")
-                        .HasColumnName("reservation_id");
-
-                    b.Property<int>("ExtraId")
-                        .HasColumnType("int")
-                        .HasColumnName("extra_id");
-
-                    b.HasKey("ReservationId", "ExtraId")
-                        .HasName("PK__Reservat__743D5ED3F8B8837F");
-
-                    b.HasIndex("ExtraId");
-
-                    b.ToTable("ReservationExtras", (string)null);
                 });
 
             modelBuilder.Entity("RoadReady.Models.Review", b =>
@@ -656,42 +617,6 @@ namespace RoadReady.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("RoadReady.Models.UserAudit", b =>
-                {
-                    b.Property<int>("AuditId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("audit_id");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AuditId"), 1L, 1);
-
-                    b.Property<string>("Action")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)")
-                        .HasColumnName("action");
-
-                    b.Property<DateTime?>("ActionTime")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasColumnName("action_time")
-                        .HasDefaultValueSql("(sysdatetime())");
-
-                    b.Property<string>("Details")
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("details");
-
-                    b.Property<int?>("UserId")
-                        .HasColumnType("int")
-                        .HasColumnName("user_id");
-
-                    b.HasKey("AuditId")
-                        .HasName("PK__UserAudi__5AF33E33E1A9B2CA");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("UserAudit", (string)null);
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -743,14 +668,19 @@ namespace RoadReady.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("RoadReady.Models.AdminActions", b =>
+            modelBuilder.Entity("ReservationCarExtras", b =>
                 {
-                    b.HasOne("RoadReady.Models.User", "Admin")
-                        .WithMany("AdminActions")
-                        .HasForeignKey("AdminId")
-                        .HasConstraintName("FK__AdminActi__admin__571DF1D5");
+                    b.HasOne("RoadReady.Models.CarExtra", null)
+                        .WithMany()
+                        .HasForeignKey("ExtraId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Navigation("Admin");
+                    b.HasOne("RoadReady.Models.Reservation", null)
+                        .WithMany()
+                        .HasForeignKey("ReservationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("RoadReady.Models.PasswordReset", b =>
@@ -779,35 +709,20 @@ namespace RoadReady.Migrations
                     b.HasOne("RoadReady.Models.Car", "Car")
                         .WithMany("Reservations")
                         .HasForeignKey("CarId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
                         .HasConstraintName("FK__Reservati__car_i__46E78A0C");
 
                     b.HasOne("RoadReady.Models.User", "User")
                         .WithMany("Reservations")
                         .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
                         .HasConstraintName("FK__Reservati__user___45F365D3");
 
                     b.Navigation("Car");
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("RoadReady.Models.ReservationExtra", b =>
-                {
-                    b.HasOne("RoadReady.Models.CarExtra", "CarExtra")
-                        .WithMany("ReservationExtra")
-                        .HasForeignKey("ExtraId")
-                        .IsRequired()
-                        .HasConstraintName("FK_ReservationExtra_CarExtra");
-
-                    b.HasOne("RoadReady.Models.Reservation", "Reservation")
-                        .WithMany("ReservationExtra")
-                        .HasForeignKey("ReservationId")
-                        .IsRequired()
-                        .HasConstraintName("FK_ReservationExtra_Reservation");
-
-                    b.Navigation("CarExtra");
-
-                    b.Navigation("Reservation");
                 });
 
             modelBuilder.Entity("RoadReady.Models.Review", b =>
@@ -827,16 +742,6 @@ namespace RoadReady.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("RoadReady.Models.UserAudit", b =>
-                {
-                    b.HasOne("RoadReady.Models.User", "User")
-                        .WithMany("UserAudits")
-                        .HasForeignKey("UserId")
-                        .HasConstraintName("FK__UserAudit__user___5AEE82B9");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("RoadReady.Models.Car", b =>
                 {
                     b.Navigation("Reservations");
@@ -844,29 +749,18 @@ namespace RoadReady.Migrations
                     b.Navigation("Reviews");
                 });
 
-            modelBuilder.Entity("RoadReady.Models.CarExtra", b =>
-                {
-                    b.Navigation("ReservationExtra");
-                });
-
             modelBuilder.Entity("RoadReady.Models.Reservation", b =>
                 {
                     b.Navigation("Payments");
-
-                    b.Navigation("ReservationExtra");
                 });
 
             modelBuilder.Entity("RoadReady.Models.User", b =>
                 {
-                    b.Navigation("AdminActions");
-
                     b.Navigation("PasswordResetRequests");
 
                     b.Navigation("Reservations");
 
                     b.Navigation("Reviews");
-
-                    b.Navigation("UserAudits");
                 });
 #pragma warning restore 612, 618
         }

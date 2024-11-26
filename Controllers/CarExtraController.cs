@@ -2,25 +2,26 @@
 using Microsoft.AspNetCore.Mvc;
 using RoadReady.Models;
 using RoadReady.Repositories;
-using Microsoft.AspNetCore.Authorization;
 using RoadReady.Exceptions;
+using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
+using RoadReady.Models.DTO;
 
 namespace RoadReady.Controllers
 {
-   
-
     [Route("api/[controller]")]
     [ApiController]
     public class CarExtraController : ControllerBase
     {
         private readonly ICarExtraRepository _carExtraRepository;
+        private readonly IMapper _mapper;
 
-        public CarExtraController(ICarExtraRepository carExtraRepository)
+        public CarExtraController(ICarExtraRepository carExtraRepository, IMapper mapper)
         {
             _carExtraRepository = carExtraRepository;
+            _mapper = mapper;
         }
 
-        
         [HttpGet]
         [Authorize(Roles = "Admin,Customer,Agent")]
         public IActionResult GetAllCarExtras()
@@ -28,7 +29,8 @@ namespace RoadReady.Controllers
             try
             {
                 var carExtras = _carExtraRepository.GetAllCarExtras();
-                return Ok(carExtras);
+                var carExtraDtos = _mapper.Map<List<CarExtraDTO>>(carExtras);
+                return Ok(carExtraDtos);
             }
             catch (InternalServerException ex)
             {
@@ -40,7 +42,6 @@ namespace RoadReady.Controllers
             }
         }
 
-        
         [HttpGet("{id}")]
         [Authorize(Roles = "Admin,Customer,Agent")]
         public IActionResult GetCarExtraById(int id)
@@ -51,7 +52,8 @@ namespace RoadReady.Controllers
                 if (carExtra == null)
                     throw new NotFoundException("CarExtra not found.");
 
-                return Ok(carExtra);
+                var carExtraDto = _mapper.Map<CarExtraDTO>(carExtra);
+                return Ok(carExtraDto);
             }
             catch (NotFoundException ex)
             {
@@ -67,18 +69,20 @@ namespace RoadReady.Controllers
             }
         }
 
-       
         [HttpPost]
         [Authorize(Roles = "Admin,Agent")]
-        public IActionResult AddCarExtra([FromBody] CarExtra carExtra)
+        public IActionResult AddCarExtra([FromBody] CreateCarExtraDTO createCarExtraDto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
             try
             {
+                var carExtra = _mapper.Map<CarExtra>(createCarExtraDto);
                 _carExtraRepository.AddCarExtra(carExtra);
-                return CreatedAtAction(nameof(GetCarExtraById), new { id = carExtra.ExtraId }, carExtra);
+
+                var carExtraDto = _mapper.Map<CarExtraDTO>(carExtra);
+                return CreatedAtAction(nameof(GetCarExtraById), new { id = carExtra.ExtraId }, carExtraDto);
             }
             catch (DuplicateResourceException ex)
             {
@@ -98,17 +102,18 @@ namespace RoadReady.Controllers
             }
         }
 
-        
         [HttpPut("{id}")]
         [Authorize(Roles = "Admin,Agent")]
-        public IActionResult UpdateCarExtra(int id, [FromBody] CarExtra carExtra)
+        public IActionResult UpdateCarExtra(int id, [FromBody] UpdateCarExtraDTO updateCarExtraDto)
         {
-            if (id != carExtra.ExtraId)
+            if (id != updateCarExtraDto.ExtraId)
                 return BadRequest(new { message = "ID in URL does not match ID in body." });
 
             try
             {
+                var carExtra = _mapper.Map<CarExtra>(updateCarExtraDto);
                 _carExtraRepository.UpdateCarExtra(carExtra);
+
                 return Ok(new { message = $"ID {id} has been updated." });
             }
             catch (NotFoundException ex)
@@ -152,6 +157,6 @@ namespace RoadReady.Controllers
             }
         }
     }
-
 }
+
 

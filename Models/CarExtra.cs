@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace RoadReady.Models
 {
     public partial class CarExtra
     {
-       public CarExtra()
-       {
-            ReservationExtra = new HashSet<ReservationExtra>();
-            Reservation = new HashSet<Reservation>();
+        public CarExtra()
+        {
+            Reservation = new HashSet<Reservation>(); // Direct collection of reservations
         }
 
         public int ExtraId { get; set; }
@@ -16,7 +16,9 @@ namespace RoadReady.Models
         public string? Description { get; set; }
         public decimal? Price { get; set; }
 
-        public virtual ICollection<ReservationExtra>? ReservationExtra { get; set; }
-        public virtual ICollection<Reservation> ?Reservation { get; set; }
+        // Directly linked reservations (many-to-many)
+        [JsonIgnore]
+        public virtual ICollection<Reservation> Reservation { get; set; }
     }
 }
+

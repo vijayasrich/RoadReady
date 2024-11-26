@@ -1,4 +1,5 @@
-﻿using RoadReady.Authentication;
+﻿using Microsoft.EntityFrameworkCore;
+using RoadReady.Authentication;
 using RoadReady.Models;
 
 namespace RoadReady.Repositories
@@ -19,7 +20,14 @@ namespace RoadReady.Repositories
 
         public CarExtra GetCarExtraById(int extraId)
         {
-            return _context.CarExtras.Find(extraId);
+            return  _context.CarExtras.Find(extraId);
+
+        }
+        public async Task<List<CarExtra>> GetCarExtrasByIdsAsync(List<int> carExtraIds)
+        {
+            return await _context.CarExtras
+                .Where(ce => carExtraIds.Contains(ce.ExtraId))
+                .ToListAsync();
         }
 
         public void AddCarExtra(CarExtra carExtra)

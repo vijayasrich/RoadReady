@@ -8,7 +8,7 @@ namespace RoadReady.Authentication
     {
         public RoadReadyContext(DbContextOptions<RoadReadyContext> options)
             : base(options) { }
-        public virtual DbSet<AdminActions> AdminActions { get; set; } = null!;
+        //public virtual DbSet<AdminActions> AdminActions { get; set; } = null!;
         public virtual DbSet<AdminDashboardData> AdminDashboardData { get; set; } = null!;
         public virtual DbSet<Car> Cars { get; set; } = null!;
         public virtual DbSet<CarExtra> CarExtras { get; set; } = null!;
@@ -17,8 +17,8 @@ namespace RoadReady.Authentication
         public virtual DbSet<Reservation> Reservations { get; set; } = null!;
         public virtual DbSet<Review> Reviews { get; set; } = null!;
         public virtual DbSet<User> Users { get; set; } = null!;
-        public virtual DbSet<UserAudit> UserAudits { get; set; } = null!;
-        public virtual DbSet<ReservationExtra> ReservationExtras { get; set; } = null!;
+       // public virtual DbSet<UserAudit> UserAudits { get; set; } = null!;
+        //public virtual DbSet<ReservationExtra> ReservationExtras { get; set; } = null!;
 
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -33,7 +33,7 @@ namespace RoadReady.Authentication
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            modelBuilder.Entity<AdminActions>(entity =>
+            /*modelBuilder.Entity<AdminActions>(entity =>
             {
                 entity.HasKey(e => e.ActionId)
                     .HasName("PK__AdminAct__74EFC21733B8F713");
@@ -56,7 +56,7 @@ namespace RoadReady.Authentication
                     .WithMany(p => p.AdminActions)
                     .HasForeignKey(d => d.AdminId)
                     .HasConstraintName("FK__AdminActi__admin__571DF1D5");
-            });
+            });*/
 
             modelBuilder.Entity<AdminDashboardData>(entity =>
             {
@@ -246,43 +246,35 @@ namespace RoadReady.Authentication
 
                 entity.Property(e => e.UserId).HasColumnName("user_id");
 
+                // Relationship with Car (one-to-many)
                 entity.HasOne(d => d.Car)
                     .WithMany(p => p.Reservations)
                     .HasForeignKey(d => d.CarId)
                     .HasConstraintName("FK__Reservati__car_i__46E78A0C");
 
+                // Relationship with User (one-to-many)
                 entity.HasOne(d => d.User)
                     .WithMany(p => p.Reservations)
                     .HasForeignKey(d => d.UserId)
                     .HasConstraintName("FK__Reservati__user___45F365D3");
 
-                // Configure the many-to-many relationship using ReservationExtra
+                // Many-to-many relationship with CarExtras (direct relationship)
                 entity.HasMany(d => d.Extras)
                     .WithMany(p => p.Reservation)
-                    .UsingEntity<ReservationExtra>(
-                        j => j
-                            .HasOne(re => re.CarExtra)
-                            .WithMany(ce => ce.ReservationExtra)
-                            .HasForeignKey(re => re.ExtraId)
-                            .OnDelete(DeleteBehavior.ClientSetNull)
-                            .HasConstraintName("FK__Reservati__extra__6383C8BA"),
-                        j => j
-                            .HasOne(re => re.Reservation)
-                            .WithMany(r => r.ReservationExtra)
-                            .HasForeignKey(re => re.ReservationId)
-                            .OnDelete(DeleteBehavior.ClientSetNull)
-                            .HasConstraintName("FK__Reservati__reser__628FA481"),
+                    .UsingEntity<Dictionary<string, object>>(
+                        "ReservationCarExtras", // Join table name
+                        j => j.HasOne<CarExtra>().WithMany().HasForeignKey("ExtraId"),
+                        j => j.HasOne<Reservation>().WithMany().HasForeignKey("ReservationId"),
                         j =>
                         {
-                            j.HasKey(re => new { re.ReservationId, re.ExtraId }).HasName("PK__Reservat__743D5ED3F8B8837F");
-
-                            j.ToTable("ReservationExtras");
-
-                            j.Property(re => re.ReservationId).HasColumnName("reservation_id");
-
-                            j.Property(re => re.ExtraId).HasColumnName("extra_id");
+                            j.ToTable("ReservationCarExtras");
+                            j.Property<int>("ReservationId").HasColumnName("reservation_id");
+                            j.Property<int>("ExtraId").HasColumnName("extra_id");
+                            j.HasKey("ReservationId", "ExtraId");
                         });
+                entity.Ignore(e => e.CarExtraIds);
             });
+
 
 
             modelBuilder.Entity<Review>(entity =>
@@ -356,7 +348,7 @@ namespace RoadReady.Authentication
                     .HasDefaultValueSql("(sysdatetime())");
             });
 
-            modelBuilder.Entity<UserAudit>(entity =>
+            /*modelBuilder.Entity<UserAudit>(entity =>
             {
                 entity.HasKey(e => e.AuditId)
                     .HasName("PK__UserAudi__5AF33E33E1A9B2CA");
@@ -381,9 +373,9 @@ namespace RoadReady.Authentication
                     .WithMany(p => p.UserAudits)
                     .HasForeignKey(d => d.UserId)
                     .HasConstraintName("FK__UserAudit__user___5AEE82B9");
-            });
+            });*/
 
-            modelBuilder.Entity<ReservationExtra>()
+            /*modelBuilder.Entity<ReservationExtra>()
      .HasKey(re => new { re.ReservationId, re.ExtraId });
 
             modelBuilder.Entity<ReservationExtra>()
@@ -398,7 +390,7 @@ namespace RoadReady.Authentication
                 .WithMany(ce => ce.ReservationExtra)
                 .HasForeignKey(re => re.ExtraId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_ReservationExtra_CarExtra");
+                .HasConstraintName("FK_ReservationExtra_CarExtra");*/
 
             // Configure the many-to-many relationship between Reservation and CarExtra
 

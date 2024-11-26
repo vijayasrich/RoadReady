@@ -60,105 +60,33 @@ namespace RoadReady.Controllers
             return Unauthorized();
         }
 
-        [HttpPost("register-customer")]
-        public async Task<IActionResult> RegisterCustomer([FromBody] RegisterModel model)
+        [HttpPost("register")]
+        public async Task<IActionResult> Register([FromBody] RegisterModel model)
         {
+            if (string.IsNullOrEmpty(model.Role))
+                return BadRequest(new Response { Status = "Error", Message = "Role is required." });
+
             var userExists = await _userManager.FindByNameAsync(model.UserName);
             if (userExists != null)
                 return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User already exists!" });
 
-            ApplicationUser users = new ApplicationUser()
+            ApplicationUser user = new ApplicationUser()
             {
                 UserName = model.UserName,
                 Email = model.Email,
                 SecurityStamp = Guid.NewGuid().ToString(),
             };
 
-            var result = await _userManager.CreateAsync(users, model.Password);
+            var result = await _userManager.CreateAsync(user, model.Password);
             if (!result.Succeeded)
             {
                 var errors = string.Join(", ", result.Errors.Select(e => e.Description));
                 return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User creation failed: " + errors });
             }
 
-            if (!await _roleManager.RoleExistsAsync(UserRoles.Customer))
-                await _roleManager.CreateAsync(new IdentityRole(UserRoles.Customer));
-
-            await _userManager.AddToRoleAsync(users, UserRoles.Customer);
-
-            return Ok(new Response { Status = "Success", Message = "Customer created successfully!" });
-        }
-
-
-        [HttpPost("register-admin")]
-        public async Task<IActionResult> RegisterAdmin([FromBody] RegisterModel model)
-        {
-            var userExists = await _userManager.FindByNameAsync(model.UserName);
-            if (userExists != null)
-                return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User already exists!" });
-
-            ApplicationUser users = new ApplicationUser()
+            if (!await _roleManager.RoleExistsAsync(model.Role))
             {
-                UserName = model.UserName,  // Ensure UserName is set if required
-                Email = model.Email,
-                SecurityStamp = Guid.NewGuid().ToString(),
-                //UserName = model.UserName
-            };
-
-            var result = await _userManager.CreateAsync(users, model.Password);
-            if (!result.Succeeded)
-            {
-                var errors = string.Join(", ", result.Errors.Select(e => e.Description));
-                return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User creation failed: " + errors });
-            }
-            if (!await _roleManager.RoleExistsAsync(UserRoles.Admin))
-                await _roleManager.CreateAsync(new IdentityRole(UserRoles.Admin));
-
-            // Assign the user to the Admin role
-            await _userManager.AddToRoleAsync(users, UserRoles.Admin);
-
-            return Ok(new Response { Status = "Success", Message = "Admin user created successfully!" });
-        }
-        /*if (!await _roleManager.RoleExistsAsync(UserRoles.Admin))
-        {
-            var roleResult = await _roleManager.CreateAsync(new IdentityRole(UserRoles.Admin));
-            if (!roleResult.Succeeded)
-            {
-                var roleErrors = string.Join(", ", roleResult.Errors.Select(e => e.Description));
-                return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "Role creation failed: " + roleErrors });
-            }
-        }
-
-        await _userManager.AddToRoleAsync(users, UserRoles.Admin);
-        return Ok(new Response { Status = "Success", Message = "Admin user created successfully!" });*/
-    
-
-
-        [HttpPost("register-agent")]
-        public async Task<IActionResult> RegisterAgent([FromBody] RegisterModel model)
-        {
-            var userExists = await _userManager.FindByNameAsync(model.UserName);
-            if (userExists != null)
-                return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User already exists!" });
-
-            ApplicationUser users = new ApplicationUser()
-            {
-                UserName = model.UserName,  // Ensure UserName is set if required
-                Email = model.Email,
-                SecurityStamp = Guid.NewGuid().ToString(),
-                //UserName = model.UserName
-            };
-
-            var result = await _userManager.CreateAsync(users, model.Password);
-            if (!result.Succeeded)
-            {
-                var errors = string.Join(", ", result.Errors.Select(e => e.Description));
-                return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User creation failed: " + errors });
-            }
-
-            if (!await _roleManager.RoleExistsAsync(UserRoles.Agent))
-            {
-                var roleResult = await _roleManager.CreateAsync(new IdentityRole(UserRoles.Agent));
+                var roleResult = await _roleManager.CreateAsync(new IdentityRole(model.Role));
                 if (!roleResult.Succeeded)
                 {
                     var roleErrors = string.Join(", ", roleResult.Errors.Select(e => e.Description));
@@ -166,8 +94,8 @@ namespace RoadReady.Controllers
                 }
             }
 
-            await _userManager.AddToRoleAsync(users, UserRoles.Agent);
-            return Ok(new Response { Status = "Success", Message = "Agent user created successfully!" });
+            await _userManager.AddToRoleAsync(user, model.Role);
+            return Ok(new Response { Status = "Success", Message = $"{model.Role} user created successfully!" });
         }
 
     }

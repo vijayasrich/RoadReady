@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace RoadReady.Models
 {
@@ -11,30 +12,33 @@ namespace RoadReady.Models
         {
             Payments = new HashSet<Payment>();
             Extras = new HashSet<CarExtra>();
-            ReservationExtra = new HashSet<ReservationExtra>();
+            CarExtraIds = new List<int>();
         }
 
         public int ReservationId { get; set; }
-        public int? UserId { get; set; }
-        public int? CarId { get; set; }
+        public int UserId { get; set; }  // Made non-nullable
+        public int CarId { get; set; }  // Made non-nullable
+
         [Required]
-        public DateTime? PickupDate { get; set; }
+        public DateTime PickupDate { get; set; }  // Made non-nullable
 
         [Required]
         [DateRange("PickupDate", ErrorMessage = "Drop-off date must be after the pickup date.")]
-        public DateTime? DropoffDate { get; set; }
-        public decimal? TotalPrice { get; set; }
-       
-        public string? Status { get; set; }
-        public DateTime? CreatedAt { get; set; }
-        public DateTime? UpdatedAt { get; set; }
+        public DateTime DropoffDate { get; set; }  // Made non-nullable
+
+        public decimal TotalPrice { get; set; }  // Made non-nullable
+        public string? Status { get; set; }  
+        public DateTime CreatedAt { get; set; }  // Made non-nullable
+        public DateTime UpdatedAt { get; set; }  // Made non-nullable
 
         public virtual Car? Car { get; set; }
         public virtual User? User { get; set; }
-        public virtual ICollection<Payment> Payments { get; set; }
-
-        public virtual ICollection<ReservationExtra>? ReservationExtra { get; set; }
-        public virtual ICollection<CarExtra>? Extras { get; set; }
-
+        public virtual ICollection<Payment>? Payments { get; set; }
+        public virtual ICollection<CarExtra> Extras { get; set; }
+        
+        public List<int> CarExtraIds { get; set; }  // List of CarExtraIds
     }
+
+   
 }
+

@@ -1,4 +1,4 @@
-﻿using RoadReady.Models;
+﻿/*using RoadReady.Models;
 
 namespace RoadReady.Repositories
 {
@@ -10,4 +10,4 @@ namespace RoadReady.Repositories
         Task UpdateAdminActionAsync(AdminActions action);
         Task DeleteAdminActionAsync(int id);
     }
-}
+}*/
