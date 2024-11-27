@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using RoadReady.Authentication;
 using System.Net.Mail;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 
 namespace RoadReady.Controllers
 {
@@ -26,7 +27,7 @@ namespace RoadReady.Controllers
             _mapper = mapper;
         }
 
-        // Endpoint to send a password reset email
+        [AllowAnonymous]
         [HttpPost("send-reset-email")]
         public async Task<IActionResult> SendPasswordResetEmail(string email)
         {
@@ -39,10 +40,15 @@ namespace RoadReady.Controllers
                     return NotFound("User with the provided email does not exist.");
                 }
 
-                // Generate reset token and expiration date
+                // Generate reset token and expiration date (UTC)
                 var resetToken = Guid.NewGuid().ToString();
                 var expirationDate = DateTime.UtcNow.AddHours(1);
+                // Convert UTC expiration date to IST (India Standard Time)
+                var indiaTimeZone = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time");
+                var localExpirationDate = TimeZoneInfo.ConvertTimeFromUtc(expirationDate, indiaTimeZone);
 
+                // Format the expiration date in a readable format (e.g., "yyyy-MM-dd HH:mm:ss")
+                var formattedExpirationDate = localExpirationDate.ToString("yyyy-MM-dd HH:mm:ss");
                 // Create and save PasswordReset entity
                 var passwordReset = new PasswordReset
                 {
@@ -58,9 +64,11 @@ namespace RoadReady.Controllers
                 // Map to DTO and send email
                 var resetDto = _mapper.Map<PasswordResetDTO>(passwordReset);
                 var subject = "Password Reset Request";
+                // Construct the email body with the correctly formatted expiration time
                 var body = $"Click the link below to reset your password:\n" +
                            $"https://roadready.com/reset-password?token={resetToken}\n" +
-                           $"Token expires at {expirationDate}.";
+                           $"Token expires at {formattedExpirationDate}.";
+
                 try
                 {
                     await _emailRepository.SendEmailAsync(email, subject, body);
@@ -68,20 +76,15 @@ namespace RoadReady.Controllers
                 }
                 catch (SmtpException smtpEx)
                 {
-                    // Log the detailed SMTP exception error
-                    return StatusCode(500, $"SMTP error: {smtpEx.Message} - Inner Exception: {smtpEx.InnerException?.Message}");
+                    // Log the exception details
+                    return StatusCode(500, $"SMTP error: {smtpEx.Message}\n{smtpEx.InnerException?.Message}");
                 }
                 catch (Exception ex)
                 {
-                    // Log any general exception
-                    return StatusCode(500, $"Error sending email: {ex.Message} - Inner Exception: {ex.InnerException?.Message}");
+                    // Log general exception
+                    return StatusCode(500, $"Error sending email: {ex.Message}\n{ex.InnerException?.Message}");
                 }
-
-                // await _emailRepository.SendEmailAsync(user.Email, subject, body);
-
-                // return Ok("Password reset email sent successfully.");
             }
-
             catch (SmtpException smtpEx)
             {
                 // Log the SMTP exception for debugging
@@ -94,33 +97,71 @@ namespace RoadReady.Controllers
             }
         }
 
+
         [HttpPost("reset-password")]
+        [AllowAnonymous]
         public async Task<IActionResult> ResetPassword(string resetToken, string newPassword)
         {
-            // Validate the reset token
-            var passwordReset = await _dbContext.PasswordResets
-                .Include(pr => pr.User)
-                .FirstOrDefaultAsync(pr => pr.ResetToken == resetToken && !pr.IsUsed && pr.ExpirationDate > DateTime.UtcNow);
-
-            if (passwordReset == null)
+            try
             {
-                return BadRequest("Invalid or expired reset token.");
+                // Decode the token from the URL if it's encoded
+                var decodedToken = Uri.UnescapeDataString(resetToken);
+
+                // Validate the reset token
+                var passwordReset = await _dbContext.PasswordResets
+                    .Include(pr => pr.User)
+                    .FirstOrDefaultAsync(pr => pr.ResetToken == decodedToken);
+
+                if (passwordReset == null)
+                {
+                    return BadRequest("Invalid reset token. The token does not exist.");
+                }
+
+                // Check if the token has already been used
+                if (passwordReset.IsUsed)
+                {
+                    return BadRequest("This reset token has already been used.");
+                }
+
+                // Check if the token has expired
+                if (passwordReset.ExpirationDate < DateTime.UtcNow)
+                {
+                    return BadRequest("The reset token has expired.");
+                }
+
+                // Ensure the user is found
+                var user = passwordReset.User;
+                if (user == null)
+                {
+                    return BadRequest("User associated with this token not found.");
+                }
+
+                // Hash the new password securely (using a strong hashing algorithm)
+                var passwordHasher = new PasswordHasher<User>();
+                user.Password = passwordHasher.HashPassword(user, newPassword);
+
+                // Mark the reset token as used
+                passwordReset.IsUsed = true;
+
+                // Save the changes in the database
+                await _dbContext.SaveChangesAsync();
+
+                return Ok("Password has been reset successfully.");
             }
-
-            // Hash the new password (make sure to use a secure password hashing method)
-            var passwordHasher = new PasswordHasher<User>();
-            passwordReset.User.Password = passwordHasher.HashPassword(passwordReset.User, newPassword);
-
-            passwordReset.IsUsed = true;
-
-            await _dbContext.SaveChangesAsync();
-
-            return Ok("Password has been reset successfully.");
+            catch (Exception ex)
+            {
+                // Return an error if something goes wrong
+                return StatusCode(500, $"An error occurred while resetting the password: {ex.Message}");
+            }
         }
+
+
+
 
 
         // Endpoint to get all password reset records (for admin or debugging purposes)
         [HttpGet("all-resets")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetAllPasswordResets()
         {
             var resets = await _dbContext.PasswordResets
@@ -133,6 +174,7 @@ namespace RoadReady.Controllers
 
         // Endpoint to get a single password reset record by token
         [HttpGet("reset/{resetToken}")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetPasswordResetByToken(string resetToken)
         {
             var passwordReset = await _dbContext.PasswordResets

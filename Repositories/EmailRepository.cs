@@ -9,7 +9,7 @@ public class EmailRepository: IEmailRepository
     private readonly string _smtpHost = "smtp.gmail.com";
     private readonly int _smtpPort = 587;
     private readonly string _smtpUser = "vijayasrichakiri01@gmail.com";
-    private readonly string _smtpPassword = "Vijayasri"; // Use the App Password
+    private readonly string _smtpPassword = "lbwd zoee phlk nbyi"; // Use the App Password
     private readonly bool _enableSsl = true;
 
     public async Task SendEmailAsync(string toEmail, string subject, string body)
