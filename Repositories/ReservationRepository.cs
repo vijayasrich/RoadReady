@@ -52,46 +52,34 @@ public class ReservationRepository : IReservationRepository
 
     public async Task UpdateReservationAsync(Reservation reservation)
     {
-        // Retrieve the existing reservation
         var existingReservation = await _context.Reservations
-                                                 .Include(r => r.Extras) // Load existing extras
-                                                 .FirstOrDefaultAsync(r => r.ReservationId == reservation.ReservationId);
+            .Include(r => r.Extras)  // Include related CarExtras to handle updates
+            .FirstOrDefaultAsync(r => r.ReservationId == reservation.ReservationId);
 
         if (existingReservation == null)
         {
             throw new Exception("Reservation not found.");
         }
 
-        // Remove existing CarExtras not in the new CarExtraIds list
-        var extrasToRemove = existingReservation.Extras
-                                               .Where(extra => !reservation.CarExtraIds.Contains(extra.ExtraId))
-                                               .ToList();
-
-        foreach (var extra in extrasToRemove)
-        {
-            existingReservation.Extras.Remove(extra);
-        }
-
-        // Add new CarExtras that are not in the existing list
-        var extrasToAdd = await _context.CarExtras
-                                         .Where(extra => reservation.CarExtraIds.Contains(extra.ExtraId) &&
-                                                        !existingReservation.Extras.Any(e => e.ExtraId == extra.ExtraId))
-                                         .ToListAsync();
-
-        foreach (var extra in extrasToAdd)
-        {
-            existingReservation.Extras.Add(extra);
-        }
-
-        // Update other fields if necessary
-        existingReservation.PickupDate = reservation.PickupDate;
+        // Update reservation fields
         existingReservation.DropoffDate = reservation.DropoffDate;
-        existingReservation.Status = reservation.Status;
-        existingReservation.TotalPrice = reservation.TotalPrice;
 
-        // Save the changes
+        // Update the CarExtras (if needed)
+        existingReservation.Extras.Clear();  // Remove all existing extras (or modify based on logic)
+
+        foreach (var extraId in reservation.CarExtraIds)
+        {
+            var carExtra = await _context.CarExtras.FindAsync(extraId);
+            if (carExtra != null)
+            {
+                existingReservation.Extras.Add(carExtra);  // Add the selected extra
+            }
+        }
+
+        // Save changes to the database
         await _context.SaveChangesAsync();
     }
+
 
 
     public async Task DeleteReservationAsync(int id)
