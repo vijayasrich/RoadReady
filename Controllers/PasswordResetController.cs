@@ -1,119 +1,154 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using RoadReady.Models;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using RoadReady.Repositories;
-using RoadReady.Models.DTO;
+using RoadReady.Models;
 using AutoMapper;
-using RoadReady.Exceptions;
 using System;
 using System.Threading.Tasks;
+using RoadReady.Authentication;
+using System.Net.Mail;
+using Microsoft.AspNetCore.Identity;
 
-
-[Route("api/[controller]")]
-[ApiController]
-public class PasswordResetController : ControllerBase
+namespace RoadReady.Controllers
 {
-    private readonly IPasswordResetRepository _passwordResetRepository;
-    private readonly IMapper _mapper;
-
-    public PasswordResetController(IPasswordResetRepository passwordResetRepository, IMapper mapper)
+    [ApiController]
+    [Route("api/[controller]")]
+    public class PasswordResetController : ControllerBase
     {
-        _passwordResetRepository = passwordResetRepository;
-        _mapper = mapper;
-    }
+        private readonly IEmailRepository _emailRepository;
+        private readonly RoadReadyContext _dbContext;
+        private readonly IMapper _mapper;
 
-    // GET: api/PasswordReset/5
-    [HttpGet("{id}")]
-    public async Task<IActionResult> GetPasswordResetById(int id)
-    {
-        try
+        public PasswordResetController(IEmailRepository emailRepository, RoadReadyContext dbContext, IMapper mapper)
         {
-            var resetRequest = await _passwordResetRepository.GetPasswordResetByIdAsync(id);
-            if (resetRequest == null)
-                return NotFound(new { message = "Password reset request not found." });
-
-            var resetRequestDTO = _mapper.Map<PasswordResetDTO>(resetRequest);
-            return Ok(resetRequestDTO);
+            _emailRepository = emailRepository;
+            _dbContext = dbContext;
+            _mapper = mapper;
         }
-        catch (Exception ex)
+
+        // Endpoint to send a password reset email
+        [HttpPost("send-reset-email")]
+        public async Task<IActionResult> SendPasswordResetEmail(string email)
         {
-            return StatusCode(StatusCodes.Status500InternalServerError, new { message = "An unexpected error occurred.", details = ex.Message });
+            try
+            {
+                // Find user by email
+                var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Email == email);
+                if (user == null)
+                {
+                    return NotFound("User with the provided email does not exist.");
+                }
+
+                // Generate reset token and expiration date
+                var resetToken = Guid.NewGuid().ToString();
+                var expirationDate = DateTime.UtcNow.AddHours(1);
+
+                // Create and save PasswordReset entity
+                var passwordReset = new PasswordReset
+                {
+                    UserId = user.UserId,
+                    ResetToken = resetToken,
+                    ExpirationDate = expirationDate,
+                    IsUsed = false
+                };
+
+                _dbContext.PasswordResets.Add(passwordReset);
+                await _dbContext.SaveChangesAsync();
+
+                // Map to DTO and send email
+                var resetDto = _mapper.Map<PasswordResetDTO>(passwordReset);
+                var subject = "Password Reset Request";
+                var body = $"Click the link below to reset your password:\n" +
+                           $"https://roadready.com/reset-password?token={resetToken}\n" +
+                           $"Token expires at {expirationDate}.";
+                try
+                {
+                    await _emailRepository.SendEmailAsync(email, subject, body);
+                    return Ok("Reset email sent successfully.");
+                }
+                catch (SmtpException smtpEx)
+                {
+                    // Log the detailed SMTP exception error
+                    return StatusCode(500, $"SMTP error: {smtpEx.Message} - Inner Exception: {smtpEx.InnerException?.Message}");
+                }
+                catch (Exception ex)
+                {
+                    // Log any general exception
+                    return StatusCode(500, $"Error sending email: {ex.Message} - Inner Exception: {ex.InnerException?.Message}");
+                }
+
+                // await _emailRepository.SendEmailAsync(user.Email, subject, body);
+
+                // return Ok("Password reset email sent successfully.");
+            }
+
+            catch (SmtpException smtpEx)
+            {
+                // Log the SMTP exception for debugging
+                return StatusCode(500, $"SMTP error: {smtpEx.Message}");
+            }
+            catch (Exception ex)
+            {
+                // Log other general exceptions for debugging
+                return StatusCode(500, $"Error sending email: {ex.Message}");
+            }
         }
-    }
 
-    // POST: api/PasswordReset
-    [HttpPost]
-    public async Task<IActionResult> AddPasswordResetRequest([FromBody] PasswordResetCreateDTO resetRequestDTO)
-    {
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
-
-        try
+        [HttpPost("reset-password")]
+        public async Task<IActionResult> ResetPassword(string resetToken, string newPassword)
         {
-            var resetRequest = _mapper.Map<PasswordReset>(resetRequestDTO);
-            resetRequest.Token = Guid.NewGuid().ToString(); // Generate token
-            resetRequest.RequestTime = DateTime.UtcNow;
+            // Validate the reset token
+            var passwordReset = await _dbContext.PasswordResets
+                .Include(pr => pr.User)
+                .FirstOrDefaultAsync(pr => pr.ResetToken == resetToken && !pr.IsUsed && pr.ExpirationDate > DateTime.UtcNow);
 
-            await _passwordResetRepository.AddPasswordResetAsync(resetRequest);
+            if (passwordReset == null)
+            {
+                return BadRequest("Invalid or expired reset token.");
+            }
 
-            var responseDTO = _mapper.Map<PasswordResetResponseDTO>(resetRequest);
-            return CreatedAtAction(nameof(GetPasswordResetById), new { id = resetRequest.ResetId }, responseDTO);
+            // Hash the new password (make sure to use a secure password hashing method)
+            var passwordHasher = new PasswordHasher<User>();
+            passwordReset.User.Password = passwordHasher.HashPassword(passwordReset.User, newPassword);
+
+            passwordReset.IsUsed = true;
+
+            await _dbContext.SaveChangesAsync();
+
+            return Ok("Password has been reset successfully.");
         }
-        catch (DuplicateResourceException ex)
-        {
-            return Conflict(new { message = ex.Message });
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(StatusCodes.Status500InternalServerError, new { message = "An unexpected error occurred.", details = ex.Message });
-        }
-    }
 
-    // PUT: api/PasswordReset/5
-    [HttpPut("{id}")]
-    public async Task<IActionResult> UpdatePasswordReset(int id, [FromBody] PasswordResetUpdateDTO resetRequestDTO)
-    {
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
 
-        try
+        // Endpoint to get all password reset records (for admin or debugging purposes)
+        [HttpGet("all-resets")]
+        public async Task<IActionResult> GetAllPasswordResets()
         {
-            var resetRequest = await _passwordResetRepository.GetPasswordResetByIdAsync(id);
-            if (resetRequest == null)
-                return NotFound(new { message = "Password reset request not found." });
+            var resets = await _dbContext.PasswordResets
+                .Include(pr => pr.User)
+                .ToListAsync();
 
-            _mapper.Map(resetRequestDTO, resetRequest); // Map updated values from DTO to entity
-            await _passwordResetRepository.UpdatePasswordResetAsync(resetRequest);
-
-            return NoContent();
+            var resetDtos = _mapper.Map<List<PasswordResetDTO>>(resets);
+            return Ok(resetDtos);
         }
-        catch (NotFoundException ex)
-        {
-            return NotFound(new { message = ex.Message });
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(StatusCodes.Status500InternalServerError, new { message = "An unexpected error occurred.", details = ex.Message });
-        }
-    }
 
-    // DELETE: api/PasswordReset/5
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> DeletePasswordReset(int id)
-    {
-        try
+        // Endpoint to get a single password reset record by token
+        [HttpGet("reset/{resetToken}")]
+        public async Task<IActionResult> GetPasswordResetByToken(string resetToken)
         {
-            var resetRequest = await _passwordResetRepository.GetPasswordResetByIdAsync(id);
-            if (resetRequest == null)
-                return NotFound(new { message = "Password reset request not found." });
+            var passwordReset = await _dbContext.PasswordResets
+                .Include(pr => pr.User)
+                .FirstOrDefaultAsync(pr => pr.ResetToken == resetToken);
 
-            await _passwordResetRepository.DeletePasswordResetAsync(id);
-            return NoContent();
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(StatusCodes.Status500InternalServerError, new { message = "An unexpected error occurred.", details = ex.Message });
+            if (passwordReset == null)
+            {
+                return NotFound("Password reset record not found.");
+            }
+
+            var resetDto = _mapper.Map<PasswordResetDTO>(passwordReset);
+            return Ok(resetDto);
         }
     }
 }
+
+
 

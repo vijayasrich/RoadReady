@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RoadReady.Authentication;
 
@@ -11,9 +12,10 @@ using RoadReady.Authentication;
 namespace RoadReady.Migrations
 {
     [DbContext(typeof(RoadReadyContext))]
-    partial class RoadReadyContextModelSnapshot : ModelSnapshot
+    [Migration("20241126152538_UpdatePasswordResetModel")]
+    partial class UpdatePasswordResetModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -376,7 +378,7 @@ namespace RoadReady.Migrations
                     b.Property<int>("ResetId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasColumnName("ResetId");
+                        .HasColumnName("reset_id");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ResetId"), 1L, 1);
 
@@ -385,18 +387,20 @@ namespace RoadReady.Migrations
                         .HasColumnName("expiration_date");
 
                     b.Property<bool>("IsUsed")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
-                        .HasColumnName("IsUsed");
+                        .HasDefaultValue(false)
+                        .HasColumnName("is_used");
 
                     b.Property<string>("ResetToken")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)")
-                        .HasColumnName("reset_token");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)")
+                        .HasColumnName("token");
 
                     b.Property<int>("UserId")
                         .HasColumnType("int")
-                        .HasColumnName("UserId");
+                        .HasColumnName("user_id");
 
                     b.HasKey("ResetId")
                         .HasName("PK_PasswordReset");

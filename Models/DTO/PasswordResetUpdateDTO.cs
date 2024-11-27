@@ -1,4 +1,4 @@
-﻿namespace RoadReady.Models.DTO
+﻿/*namespace RoadReady.Models.DTO
 {
     public class PasswordResetUpdateDTO
     {
@@ -7,4 +7,4 @@
        
         public string Token { get; set; } = null!;
     }
-}
+}*/

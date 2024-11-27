@@ -43,6 +43,7 @@ namespace RoadReady
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
                 };
             });
+            builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("SmtpSettings"));
 
             // Register Repositories
             builder.Services.AddScoped<ICarRepository, CarRepository>();
@@ -53,10 +54,12 @@ namespace RoadReady
             builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
             builder.Services.AddScoped<IAdminDashboardDataRepository, AdminDashboardDataRepository>();
             builder.Services.AddScoped<ICarExtraRepository, CarExtraRepository>();
+            builder.Services.AddTransient<IEmailRepository, EmailRepository>();
+
 
             // Add AutoMapper
             builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly); // Register AutoMapper Profile
-
+            builder.Services.AddLogging();
             // Add Controllers and Swagger
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();

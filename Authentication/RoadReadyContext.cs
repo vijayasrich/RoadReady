@@ -190,9 +190,38 @@ namespace RoadReady.Authentication
                       .HasConstraintName("FK_Payments_Reservations");
             });
 
-
-
             modelBuilder.Entity<PasswordReset>(entity =>
+            {
+                // Define the primary key with a meaningful name
+                entity.HasKey(e => e.ResetId)
+                    .HasName("PK_PasswordReset");
+
+                // Specify the table name
+                entity.ToTable("PasswordReset");
+
+                // Configure the ExpirationDate column with datetime type
+                entity.Property(e => e.ExpirationDate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("expiration_date");
+
+                // Configure the ResetToken column with a maximum length of 100
+                entity.Property(e => e.ResetToken)
+                    .HasMaxLength(100)
+                    .HasColumnName("reset_token");
+
+                // Define the foreign key relationship with User and give a meaningful name
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.PasswordResetRequests)
+                    .HasForeignKey(d => d.UserId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_PasswordReset_User");
+            });
+
+
+
+
+
+            /*modelBuilder.Entity<PasswordReset>(entity =>
             {
                 entity.HasKey(e => e.ResetId)
                     .HasName("PK__Password__40FB0520CEEC07F9");
@@ -205,7 +234,7 @@ namespace RoadReady.Authentication
 
                 entity.Property(e => e.ResetTime).HasColumnName("reset_time");
 
-                entity.Property(e => e.Token)
+                entity.Property(e => e.ResetToken)
                     .HasMaxLength(255)
                     .HasColumnName("token");
 
@@ -215,7 +244,7 @@ namespace RoadReady.Authentication
                     .WithMany(p => p.PasswordResetRequests)
                     .HasForeignKey(d => d.UserId)
                     .HasConstraintName("FK__PasswordR__user___6754599E");
-            });
+            });*/
 
             modelBuilder.Entity<Reservation>(entity =>
             {

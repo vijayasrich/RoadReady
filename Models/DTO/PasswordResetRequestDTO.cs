@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿/*using System.ComponentModel.DataAnnotations;
 
 namespace RoadReady.Models.DTO
 {
@@ -8,5 +8,5 @@ namespace RoadReady.Models.DTO
         [EmailAddress(ErrorMessage = "Invalid email format.")]
         public string UserEmail { get; set; } = null!;
     }
-}
+}*/
 

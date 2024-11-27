@@ -1,7 +1,8 @@
-﻿using RoadReady.Models;
-using Microsoft.EntityFrameworkCore;
-using System.Threading.Tasks;
+﻿using Microsoft.EntityFrameworkCore;
 using RoadReady.Authentication;
+using RoadReady.Models;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace RoadReady.Repositories
 {
@@ -14,37 +15,44 @@ namespace RoadReady.Repositories
             _context = context;
         }
 
-        // Get PasswordReset by ID
-        public async Task<PasswordReset> GetPasswordResetByIdAsync(int id)
+        public async Task<IEnumerable<PasswordReset>> GetAllResetsAsync()
         {
-            return await _context.PasswordResets
-                                 .FirstOrDefaultAsync(pr => pr.ResetId == id);
+            return await _context.PasswordResets.ToListAsync();
         }
 
-        // Add a new PasswordReset record
-        public async Task AddPasswordResetAsync(PasswordReset passwordReset)
+        public async Task<PasswordReset?> GetResetByIdAsync(int resetId)
         {
-            await _context.PasswordResets.AddAsync(passwordReset);
+            return await _context.PasswordResets.FindAsync(resetId);
+        }
+
+        public async Task<PasswordReset?> GetResetByTokenAsync(string token)
+        {
+            return await _context.PasswordResets
+                .FirstOrDefaultAsync(pr => pr.ResetToken == token);
+        }
+
+        public async Task AddResetAsync(PasswordReset passwordReset)
+        {
+            _context.PasswordResets.Add(passwordReset);
             await _context.SaveChangesAsync();
         }
 
-        // Update an existing PasswordReset record
-        public async Task UpdatePasswordResetAsync(PasswordReset passwordReset)
+        public async Task UpdateResetAsync(PasswordReset passwordReset)
         {
             _context.PasswordResets.Update(passwordReset);
             await _context.SaveChangesAsync();
         }
 
-        // Delete a PasswordReset record by ID
-        public async Task DeletePasswordResetAsync(int id)
+        public async Task DeleteResetAsync(int resetId)
         {
-            var passwordReset = await _context.PasswordResets
-                                               .FirstOrDefaultAsync(pr => pr.ResetId == id);
-            if (passwordReset != null)
+            var reset = await GetResetByIdAsync(resetId);
+            if (reset != null)
             {
-                _context.PasswordResets.Remove(passwordReset);
+                _context.PasswordResets.Remove(reset);
                 await _context.SaveChangesAsync();
             }
         }
     }
 }
+
+

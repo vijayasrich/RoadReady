@@ -9,5 +9,6 @@ namespace RoadReady.Repositories
         Task AddUserAsync(User users);
         Task UpdateUserAsync(User users);
         Task DeleteUserAsync(int id);
+        
     }
 }
