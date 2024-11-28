@@ -24,16 +24,16 @@ namespace RoadReady
             builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<RoadReadyContext>()
                 .AddDefaultTokenProviders();
+
             builder.Services.AddCors(options =>
             {
                 options.AddPolicy("AllowAll", policy =>
                 {
-                    policy.AllowAnyOrigin()      // Allow all origins
-                          .AllowAnyMethod()      // Allow all HTTP methods
-                          .AllowAnyHeader();     // Allow all headers
+                    policy.AllowAnyOrigin()
+                          .AllowAnyMethod()
+                          .AllowAnyHeader();
                 });
             });
-
 
             builder.Services.AddAuthentication(options =>
             {
@@ -48,14 +48,15 @@ namespace RoadReady
                 {
                     ValidateIssuer = true,
                     ValidateAudience = true,
-                    ValidAudience = builder.Configuration["Jwt:Audience"],
                     ValidIssuer = builder.Configuration["Jwt:Issuer"],
+                    ValidAudience = builder.Configuration["Jwt:Audience"],
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
                 };
             });
+
             builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("SmtpSettings"));
 
-            // Register Repositories
+            // Register repositories
             builder.Services.AddScoped<ICarRepository, CarRepository>();
             builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddScoped<IReservationRepository, ReservationRepository>();
@@ -66,10 +67,9 @@ namespace RoadReady
             builder.Services.AddScoped<ICarExtraRepository, CarExtraRepository>();
             builder.Services.AddTransient<IEmailRepository, EmailRepository>();
 
-
             // Add AutoMapper
-            builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly); // Register AutoMapper Profile
-            builder.Services.AddLogging();
+            builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);
+
             // Add Controllers and Swagger
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
@@ -79,7 +79,7 @@ namespace RoadReady
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
                     In = ParameterLocation.Header,
-                    Description = "Please enter your token",
+                    Description = "Please enter your JWT token",
                     Name = "Authorization",
                     Type = SecuritySchemeType.Http,
                     Scheme = "bearer"
@@ -95,7 +95,7 @@ namespace RoadReady
                                 Id = "Bearer"
                             }
                         },
-                        new string[] { }
+                        Array.Empty<string>()
                     }
                 });
             });
@@ -108,7 +108,9 @@ namespace RoadReady
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+
             app.UseCors("AllowAll");
+
             app.UseHttpsRedirection();
 
             app.UseAuthentication();
@@ -120,3 +122,4 @@ namespace RoadReady
         }
     }
 }
+

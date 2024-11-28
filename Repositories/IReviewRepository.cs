@@ -8,7 +8,7 @@ namespace RoadReady.Repositories
         Task<IEnumerable<Review>> GetAllReviewsAsync();
         Task AddReviewAsync(Review review);
         Task UpdateReviewAsync(Review review);
-        Task DeleteReviewByCarIdAsync(int id);
+       // Task DeleteReviewByCarIdAsync(int id);
         
     }
 }
