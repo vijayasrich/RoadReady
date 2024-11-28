@@ -9,6 +9,7 @@ using RoadReady.Models.DTO;
 
 namespace RoadReady.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class CarExtraController : ControllerBase

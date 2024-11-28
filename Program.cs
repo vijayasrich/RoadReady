@@ -24,6 +24,16 @@ namespace RoadReady
             builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<RoadReadyContext>()
                 .AddDefaultTokenProviders();
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAll", policy =>
+                {
+                    policy.AllowAnyOrigin()      // Allow all origins
+                          .AllowAnyMethod()      // Allow all HTTP methods
+                          .AllowAnyHeader();     // Allow all headers
+                });
+            });
+
 
             builder.Services.AddAuthentication(options =>
             {
@@ -98,7 +108,7 @@ namespace RoadReady
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
-
+            app.UseCors("AllowAll");
             app.UseHttpsRedirection();
 
             app.UseAuthentication();
