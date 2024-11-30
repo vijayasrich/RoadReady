@@ -28,15 +28,17 @@ namespace RoadReady.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginModel model)
         {
-            var users = await _userManager.FindByNameAsync(model.UserName);
-            if (users != null && await _userManager.CheckPasswordAsync(users, model.Password))
+            var user = await _userManager.FindByNameAsync(model.UserName);
+            if (user != null && await _userManager.CheckPasswordAsync(user, model.Password))
             {
-                var userRoles = await _userManager.GetRolesAsync(users);
+                var userRoles = await _userManager.GetRolesAsync(user);
                 var authClaims = new List<Claim>
-                {
-                    new Claim(ClaimTypes.Name, users.UserName),
-                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-                };
+        {
+            new Claim(ClaimTypes.Name, user.UserName),
+            new Claim("userId", user.Id.ToString()),  // Add userId as a claim
+            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+        };
+
                 foreach (var userRole in userRoles)
                 {
                     authClaims.Add(new Claim(ClaimTypes.Role, userRole));
@@ -59,6 +61,7 @@ namespace RoadReady.Controllers
             }
             return Unauthorized();
         }
+
 
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterModel model)

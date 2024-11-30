@@ -9,5 +9,7 @@ namespace RoadReady.Repositories
         Task AddPaymentAsync(Payment payment);
         Task UpdatePaymentAsync(Payment payment);
         Task DeletePaymentAsync(int id);
+        Task<IEnumerable<Payment>> GetPaymentsByReservationIdsAsync(IEnumerable<int> reservationIds);
+        
     }
 }

@@ -49,6 +49,12 @@ public class PaymentRepository : IPaymentRepository
         // Save changes
         await _context.SaveChangesAsync();
     }
+    public async Task<IEnumerable<Payment>> GetPaymentsByReservationIdsAsync(IEnumerable<int> reservationIds)
+    {
+        return await _context.Payments
+            .Where(payment => reservationIds.Contains(payment.ReservationId))
+            .ToListAsync();
+    }
 
 
     public async Task DeletePaymentAsync(int id)
