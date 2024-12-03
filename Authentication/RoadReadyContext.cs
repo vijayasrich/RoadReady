@@ -1,10 +1,11 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using RoadReady.Models;
 
 namespace RoadReady.Authentication
 {
-    public class RoadReadyContext : IdentityDbContext<ApplicationUser>
+    public class RoadReadyContext : IdentityDbContext<ApplicationUser, IdentityRole<int>, int>
     {
         public RoadReadyContext(DbContextOptions<RoadReadyContext> options)
             : base(options) { }

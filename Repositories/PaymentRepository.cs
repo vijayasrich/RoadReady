@@ -14,7 +14,28 @@ public class PaymentRepository : IPaymentRepository
     {
         _context = context;
     }
+    public async Task<List<Payment>> GetPaymentsByUserIdAsync(int userId)
+    {
+        try
+        {
+            // Fetch payments based on userId by joining Reservation and Payment
+            var payments = await _context.Payments
+                .Join(_context.Reservations, // Join Payments with Reservations
+                      payment => payment.ReservationId, // Payment's ReservationId
+                      reservation => reservation.ReservationId, // Reservation's ReservationId
+                      (payment, reservation) => new { payment, reservation })
+                .Where(x => x.reservation.UserId == userId) // Filter by UserId in Reservation
+                .Select(x => x.payment) // Select only the Payment object
+                .ToListAsync();
 
+            return payments;
+        }
+        catch (Exception ex)
+        {
+            // Log or handle exceptions
+            throw new Exception("Error fetching payments by userId", ex);
+        }
+    }
     public async Task<Payment> GetPaymentByIdAsync(int id)
     {
         return await _context.Payments.FindAsync(id);

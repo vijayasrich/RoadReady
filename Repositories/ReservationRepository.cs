@@ -14,7 +14,13 @@ public class ReservationRepository : IReservationRepository
     {
         _context = context;
     }
-    public async Task<IEnumerable<Reservation>> GetReservationsByUserIdAsync(string userId)
+    public async Task<IEnumerable<Reservation>> GetReservationsByUserIdAsync(int userId)
+    {
+        return await _context.Reservations
+            .Where(r => r.UserId == userId)
+            .ToListAsync();
+    }
+    /*public async Task<IEnumerable<Reservation>> GetReservationsByUserIdAsync(string userId)
     {
         // Convert the userId (string) to int
         int userIntId = int.Parse(userId);
@@ -23,7 +29,7 @@ public class ReservationRepository : IReservationRepository
                              .Where(r => r.UserId == userIntId)  // Now both sides are int
                              .ToListAsync();
     }
-
+    */
 
 
     public async Task<Reservation> GetReservationByIdAsync(int id)

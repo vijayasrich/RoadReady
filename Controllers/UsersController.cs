@@ -27,7 +27,7 @@ namespace RoadReady.Controllers
 
         // GET: api/User
         [HttpGet]
-        [Authorize(Roles = "Admin,Agent")]
+        //[Authorize(Roles = "Admin,Agent")]
         public async Task<IActionResult> GetAllUsers()
         {
             try
@@ -66,7 +66,7 @@ namespace RoadReady.Controllers
 
         // GET: api/User/{id}
         [HttpGet("{id}")]
-        [Authorize(Roles = "Admin,Agent,Customer")]
+        //[Authorize(Roles = "Customer")]
         public async Task<IActionResult> GetUserById(int id)
         {
             try
@@ -103,7 +103,7 @@ namespace RoadReady.Controllers
 
         // POST: api/User
         [HttpPost]
-        [Authorize(Roles = "Admin,Customer")]
+        [Authorize(Roles = "Customer")]
         public async Task<IActionResult> CreateUser([FromBody] Models.DTO.UserDTO userDto)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -125,7 +125,7 @@ namespace RoadReady.Controllers
 
         // PUT: api/User/{id}
         [HttpPut("{id}")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Customer")]
         public async Task<IActionResult> UpdateUser(int id, [FromBody] Models.DTO.UserDTO userDto)
         {
             if (id != userDto.UserId) return BadRequest("User ID mismatch.");
@@ -152,7 +152,7 @@ namespace RoadReady.Controllers
         }
 
         // DELETE: api/User/{id}
-        [HttpDelete("{id}")]
+        /*[HttpDelete("{id}")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteUser(int id)
         {
@@ -186,7 +186,7 @@ namespace RoadReady.Controllers
                 _logger.LogError(ex, $"An unexpected error occurred while deleting the user with ID {id}.");
                 return StatusCode(500, new { message = "An unexpected error occurred.", details = ex.Message });
             }
-        }
+        }*/
     }
 }
 

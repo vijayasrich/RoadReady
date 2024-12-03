@@ -25,9 +25,35 @@ namespace RoadReady.Controllers
             _logger = logger;
             _mapper = mapper;
         }
+        // Get reservations by UserId
+        [HttpGet("user/{userId}")]
+        [Authorize(Roles = "Customer")]
+        public async Task<ActionResult<IEnumerable<ReservationDTO>>> GetReservationsByUserId(int userId)
+        {
+            try
+            {
+                // Retrieve reservations for the given userId
+                var reservations = await _reservationRepository.GetReservationsByUserIdAsync(userId);
+                if (!reservations.Any())
+                {
+                    return NotFound(new { message = $"No reservations found for user with ID {userId}." });
+                }
+
+                // Map the reservations to DTOs
+                var reservationDTOs = _mapper.Map<List<ReservationDTO>>(reservations);
+                return Ok(reservationDTOs);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"An error occurred while retrieving reservations for user with ID {userId}.");
+                return StatusCode(500, new { message = "An unexpected error occurred." });
+            }
+        }
+
 
         // Get all reservations
         [HttpGet]
+        [Authorize(Roles = "Admin,Agent")] // Only Admin and Agent can access all reservations
         public async Task<ActionResult<IEnumerable<ReservationDTO>>> GetAllReservations()
         {
             try
@@ -48,8 +74,8 @@ namespace RoadReady.Controllers
             }
         }
 
-
         [HttpGet("{id}")]
+        [Authorize(Roles ="Customer")]
         public async Task<ActionResult<ReservationDTO>> GetReservationById(int id)
         {
             try
@@ -72,7 +98,7 @@ namespace RoadReady.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Customer,Agent")]
+        [Authorize(Roles = "Customer")] // Only Customer can add reservations
         public async Task<IActionResult> AddReservation([FromBody] CreateReservationDTO reservationDTO)
         {
             if (reservationDTO == null || reservationDTO.CarExtraIds == null)
@@ -119,8 +145,9 @@ namespace RoadReady.Controllers
             }
         }
 
+
         // Update an existing reservation
-        [HttpPut("{id}")]
+        /*[HttpPut("{id}")]
         [Authorize(Roles = "Admin,Agent,Customer")]
         public async Task<IActionResult> UpdateReservation(int id, [FromBody] ReservationDTO reservationDTO)
         {
@@ -147,10 +174,10 @@ namespace RoadReady.Controllers
                 _logger.LogError(ex, $"An error occurred while updating the reservation with ID {id}.");
                 return StatusCode(500, new { message = "An unexpected error occurred." });
             }
-        }
+        }*/
 
         // Delete a reservation
-        [HttpDelete("{id}")]
+        /*[HttpDelete("{id}")]
         [Authorize(Roles = "Admin,Agent")]
         public async Task<IActionResult> DeleteReservation(int id)
         {
@@ -170,7 +197,29 @@ namespace RoadReady.Controllers
                 _logger.LogError(ex, $"An error occurred while deleting the reservation with ID {id}.");
                 return StatusCode(500, new { message = "An unexpected error occurred." });
             }
+        }*/
+        [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")] // Restricting this action only to Admin role
+        public async Task<IActionResult> DeleteReservation(int id)
+        {
+            try
+            {
+                var reservation = await _reservationRepository.GetReservationByIdAsync(id);
+                if (reservation == null)
+                {
+                    return NotFound(new { message = $"Reservation with ID {id} not found." });
+                }
+
+                await _reservationRepository.DeleteReservationAsync(id);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"An error occurred while deleting the reservation with ID {id}.");
+                return StatusCode(500, new { message = "An unexpected error occurred." });
+            }
         }
+
     }
 }
 

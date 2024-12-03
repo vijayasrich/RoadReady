@@ -100,7 +100,7 @@ namespace RoadReady.Controllers
         }
 
         // PUT: api/Reviews/ByCar/{carId}
-        [HttpPut("ByCar/{carId}")]
+        /*[HttpPut("ByCar/{carId}")]
         [Authorize(Roles = "Admin,Customer")]
         public async Task<IActionResult> UpdateReview(int carId, [FromBody] ReviewsDTO reviewDto)
         {
@@ -133,7 +133,7 @@ namespace RoadReady.Controllers
                 _logger.LogError(ex, $"An error occurred while updating the review for Car ID {carId}.");
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
-        }
+        }*/
     }
 }
 

@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace RoadReady.Authentication
 {
-    public class ApplicationUser : IdentityUser
+    public class ApplicationUser : IdentityUser<int>
     {
        
     }

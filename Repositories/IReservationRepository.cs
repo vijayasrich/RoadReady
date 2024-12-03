@@ -9,7 +9,9 @@ namespace RoadReady.Repositories
         Task AddReservationAsync(Reservation reservation);
         Task UpdateReservationAsync(Reservation reservation);
         Task DeleteReservationAsync(int id);
-        Task<IEnumerable<Reservation>> GetReservationsByUserIdAsync(string userId);
-        
-    }
+        Task<IEnumerable<Reservation>> GetReservationsByUserIdAsync(int userId);
+    
+    //Task<IEnumerable<Reservation>> GetReservationsByUserIdAsync(string userId);
+
+}
 }

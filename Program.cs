@@ -21,7 +21,7 @@ namespace RoadReady
             builder.Services.AddDbContext<RoadReadyContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("RoadReadyConnectionString")));
 
-            builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+            builder.Services.AddIdentity<ApplicationUser, IdentityRole<int>>()
                 .AddEntityFrameworkStores<RoadReadyContext>()
                 .AddDefaultTokenProviders();
 

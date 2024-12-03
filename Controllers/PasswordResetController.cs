@@ -160,7 +160,7 @@ namespace RoadReady.Controllers
 
 
         // Endpoint to get all password reset records (for admin or debugging purposes)
-        [HttpGet("all-resets")]
+        /*[HttpGet("all-resets")]
         [AllowAnonymous]
         public async Task<IActionResult> GetAllPasswordResets()
         {
@@ -188,7 +188,7 @@ namespace RoadReady.Controllers
 
             var resetDto = _mapper.Map<PasswordResetDTO>(passwordReset);
             return Ok(resetDto);
-        }
+        }*/
     }
 }
 

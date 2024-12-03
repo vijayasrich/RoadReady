@@ -14,92 +14,92 @@ namespace RoadReady.Controllers
     {
         private readonly IPaymentRepository _paymentRepository;
         private readonly IMapper _mapper;
-        private readonly IReservationRepository _reservationRepository;
+        //private readonly IReservationRepository _reservationRepository;
 
-        public PaymentsController(IPaymentRepository paymentRepository,IReservationRepository reservationRepository,IMapper mapper)
+        public PaymentsController(IPaymentRepository paymentRepository,/*IReservationRepository reservationRepository,*/IMapper mapper)
         {
-            _reservationRepository = reservationRepository;
+           // _reservationRepository = reservationRepository;
             _paymentRepository = paymentRepository;
             _mapper = mapper;
         }
-        [HttpGet]
-        [Authorize(Roles = "Admin,Agent,Customer")]
-        public async Task<ActionResult<IEnumerable<PaymentDTO>>> GetPayments()
+
+        [HttpGet("user/{userId}")]
+        public async Task<IActionResult> GetPaymentsByUserId(int userId)
         {
             try
             {
-                // Get the logged-in user's ID from the claims (NameIdentifier should be the unique user ID in your JWT)
-                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var payments = await _paymentRepository.GetPaymentsByUserIdAsync(userId);
 
-                // If the user is a Customer, fetch their reservations first
-                if (User.IsInRole("Customer"))
+                if (payments == null || !payments.Any())
                 {
-                    // Fetch reservations made by the logged-in user
-                    var reservations = await _reservationRepository.GetReservationsByUserIdAsync(userId);
-
-                    // If no reservations are found, return a NotFound response
-                    if (reservations == null || !reservations.Any())
-                    {
-                        return NotFound("No reservations found for this user.");
-                    }
-
-                    // Get the reservationIds from the user's reservations
-                    var reservationIds = reservations.Select(r => r.ReservationId).ToList();
-
-                    // Fetch payments for these reservations
-                    var payments = await _paymentRepository.GetPaymentsByReservationIdsAsync(reservationIds);
-
-                    // If no payments are found, return a NotFound response
-                    if (payments == null || !payments.Any())
-                    {
-                        return NotFound("No payments found for this user.");
-                    }
-
-                    // Map payments to PaymentDTO and return the result
-                    var paymentDTOs = _mapper.Map<IEnumerable<PaymentDTO>>(payments);
-                    return Ok(paymentDTOs);
+                    return NotFound("No payments found for this user.");
                 }
-                else
-                {
-                    // If the user is an Admin or Agent, return all payments
-                    var payments = await _paymentRepository.GetAllPaymentsAsync();
-                    var paymentDTOs = _mapper.Map<IEnumerable<PaymentDTO>>(payments);
-                    return Ok(paymentDTOs);
-                }
+
+                return Ok(payments);
             }
             catch (Exception ex)
             {
-                // Catch any unexpected errors and return a server error response
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                    new { message = "An error occurred while fetching the payments.", details = ex.Message });
+                // Handle exception (e.g., log it)
+                return StatusCode(500, "Internal server error: " + ex.Message);
             }
         }
 
-
-        /*[HttpGet]
-        [Authorize(Roles = "Admin,Agent,Customer")]
+        [HttpGet]
+        //[Authorize(Roles = "Admin,Agent,Customer")]
         public async Task<ActionResult<IEnumerable<PaymentDTO>>> GetAllPayments()
         {
             try
             {
-                var payments = await _paymentRepository.GetAllPaymentsAsync();
-                if (payments == null || !payments.Any())
+                // Get user ID from JWT token
+                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+                // Check if the user is an Admin or Agent - they can access all payments
+                if (User.IsInRole("Admin") || User.IsInRole("Agent"))
                 {
-                    return NotFound("No payments found.");
+                    // Admin/Agent can see all payments
+                    var payments = await _paymentRepository.GetAllPaymentsAsync();
+
+                    if (payments == null || !payments.Any())
+                    {
+                        return NotFound("No payments found.");
+                    }
+
+                    var paymentDTOs = _mapper.Map<IEnumerable<PaymentDTO>>(payments);
+                    return Ok(paymentDTOs);
+                }
+                else if (User.IsInRole("Customer"))
+                {
+                    // Customer can only see their own payments
+                    if (int.TryParse(userId, out int userIdInt))
+                    {
+                        var payments = await _paymentRepository.GetPaymentsByUserIdAsync(userIdInt);
+
+                        if (payments == null || !payments.Any())
+                        {
+                            return NotFound("No payments found for this user.");
+                        }
+
+                        var paymentDTOs = _mapper.Map<IEnumerable<PaymentDTO>>(payments);
+                        return Ok(paymentDTOs);
+                    }
+                    else
+                    {
+                        return Unauthorized("Invalid user ID");
+                    }
                 }
 
-                var paymentDTOs = _mapper.Map<IEnumerable<PaymentDTO>>(payments);
-                return Ok(paymentDTOs);
+                // If no role is matched (just a safety net)
+                return Unauthorized("You do not have permission to view payments.");
             }
             catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError,
                     new { message = "An error occurred while retrieving payments.", details = ex.Message });
             }
-        }*/
+        }
 
         [HttpGet("{id}")]
-        [Authorize(Roles = "Admin,Agent,Customer")]
+        //[Authorize(Roles = "Admin,Agent,Customer")]
         public async Task<ActionResult<PaymentDTO>> GetPaymentById(int id)
         {
             try
@@ -142,7 +142,7 @@ namespace RoadReady.Controllers
             }
         }
 
-        [HttpPut("{id}")]
+        /*[HttpPut("{id}")]
         [Authorize(Roles = "Admin,Customer")]
         public async Task<IActionResult> UpdatePayment(int id, [FromBody] PaymentDTO paymentDTO)
         {
@@ -174,7 +174,7 @@ namespace RoadReady.Controllers
                     new { message = "An error occurred while updating the payment.", details = ex.Message });
             }
         }
-
+        
         [HttpDelete("{id}")]
         [Authorize(Roles = "Admin,Customer")]
         public async Task<IActionResult> DeletePayment(int id)
@@ -195,7 +195,7 @@ namespace RoadReady.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError,
                     new { message = "An error occurred while deleting the payment.", details = ex.Message });
             }
-        }
+        }*/
     }
 }
 
