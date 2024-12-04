@@ -51,9 +51,10 @@ public class ReservationRepository : IReservationRepository
         return await _context.Reservations
            .Include(r => r.Extras) // Include CarExtras for each reservation
            .ToListAsync();
+
     }
 
-    public async Task AddReservationAsync(Reservation reservation)
+    /*public async Task AddReservationAsync(Reservation reservation)
     {
         // Load CarExtras based on the CarExtraIds
         if (reservation.CarExtraIds != null && reservation.CarExtraIds.Any())
@@ -71,6 +72,14 @@ public class ReservationRepository : IReservationRepository
 
         await _context.Reservations.AddAsync(reservation);
         await _context.SaveChangesAsync();
+    }
+    */
+    // In the repository:
+    public async Task<Reservation> AddReservationAsync(Reservation reservation)
+    {
+        await _context.Reservations.AddAsync(reservation);
+        await _context.SaveChangesAsync();
+        return reservation;  // Return the saved reservation
     }
 
 

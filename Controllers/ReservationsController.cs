@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using RoadReady.Authentication;
 using RoadReady.Models;
 using RoadReady.Models.DTO;
 using RoadReady.Repositories;
@@ -17,15 +19,17 @@ namespace RoadReady.Controllers
         private readonly ICarExtraRepository _carExtraRepository;
         private readonly ILogger<ReservationsController> _logger;
         private readonly IMapper _mapper;
+        private readonly RoadReadyContext _context;
 
-        public ReservationsController(IReservationRepository reservationRepository, ICarExtraRepository carExtraRepository,ILogger<ReservationsController> logger, IMapper mapper)
+        public ReservationsController(IReservationRepository reservationRepository, ICarExtraRepository carExtraRepository,ILogger<ReservationsController> logger, IMapper mapper, RoadReadyContext context)
         {
             _reservationRepository = reservationRepository;
             _carExtraRepository = carExtraRepository;
             _logger = logger;
             _mapper = mapper;
+            _context=context;
         }
-        // Get reservations by UserId
+        /*// Get reservations by UserId
         [HttpGet("user/{userId}")]
         [Authorize(Roles = "Customer")]
         public async Task<ActionResult<IEnumerable<ReservationDTO>>> GetReservationsByUserId(int userId)
@@ -48,10 +52,138 @@ namespace RoadReady.Controllers
                 _logger.LogError(ex, $"An error occurred while retrieving reservations for user with ID {userId}.");
                 return StatusCode(500, new { message = "An unexpected error occurred." });
             }
+        }*/
+        [HttpGet("all/{userId}")]
+        [Authorize(Roles = "Customer")]
+        public async Task<IActionResult> GetReservationsByUserId(int userId)
+        {
+            try
+            {
+                // Eager load the related CarExtra data
+                var reservations = await _context.Reservations
+                    .Where(r => r.UserId == userId)
+                    .Include(r => r.Extras) // Include the related CarExtra entities
+                    .ToListAsync();
+
+                // Filter for completed and ongoing reservations based on DropoffDate
+                var completedReservations = reservations
+                    .Where(r => r.DropoffDate < DateTime.Now)
+                    .Select(r => new
+                    {
+                        r.ReservationId,
+                        r.UserId,
+                        r.CarId,
+                        r.PickupDate,
+                        r.DropoffDate,
+                        r.TotalPrice,
+                        r.Status,
+                        CarExtraIds = r.Extras.Select(e => e.ExtraId).ToList(),
+                        Extras = r.Extras.Select(e => new
+                        {
+                            e.ExtraId,
+                            e.Name,
+                            e.Description,
+                            e.Price
+                        }).ToList()
+                    })
+                    .ToList();
+
+                var ongoingReservations = reservations
+                    .Where(r => r.DropoffDate >= DateTime.Now)
+                    .Select(r => new
+                    {
+                        r.ReservationId,
+                        r.UserId,
+                        r.CarId,
+                        r.PickupDate,
+                        r.DropoffDate,
+                        r.TotalPrice,
+                        r.Status,
+                        CarExtraIds = r.Extras.Select(e => e.ExtraId).ToList(),
+                        Extras = r.Extras.Select(e => new
+                        {
+                            e.ExtraId,
+                            e.Name,
+                            e.Description,
+                            e.Price
+                        }).ToList()
+                    })
+                    .ToList();
+
+                var response = new
+                {
+                    completedReservations,
+                    ongoingReservations
+                };
+
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
         }
 
+        /*[HttpGet("all/{userId}")]
+        [Authorize(Roles ="Customer")]
+        public async Task<IActionResult> GetReservationsByUserId(int userId)
+        {
+            try
+            {
+                var reservations = await _context.Reservations
+                    .Where(r => r.UserId == userId)
+                    .ToListAsync();
 
-        // Get all reservations
+                // Filter for completed reservations based on DropOffDate
+                var completedReservations = reservations.Where(r => r.DropoffDate < DateTime.Now).ToList();
+                var ongoingReservations = reservations.Where(r => r.DropoffDate >= DateTime.Now).ToList();
+
+                var response = new
+                {
+                    completedReservations = completedReservations,
+                    ongoingReservations = ongoingReservations
+                };
+
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+        */
+
+        [HttpGet]
+        [Authorize(Roles = "Admin,Agent")] // Only Admin and Agent can access all reservations
+        public async Task<ActionResult<IEnumerable<ReservationDTO>>> GetAllReservations()
+        {
+            var reservations = await _context.Reservations
+            .Include(r => r.Extras) // Include the related CarExtra entities
+            .ToListAsync();
+
+            // Map to DTO or return directly
+            var reservationDTOs = reservations.Select(r => new ReservationDTO
+            {
+                ReservationId = r.ReservationId,
+                UserId = r.UserId,
+                CarId = r.CarId,
+                PickupDate = r.PickupDate,
+                DropoffDate = r.DropoffDate,
+                TotalPrice = r.TotalPrice,
+                Status = r.Status,
+                CarExtraIds = r.Extras.Select(e => e.ExtraId).ToList(), // Map the related ExtraIds
+                Extras = r.Extras.Select(e => new CarExtraDTO
+                {
+                    ExtraId = e.ExtraId,
+                    Name = e.Name,
+                    Price = (decimal)e.Price
+                }).ToList() // Map the related CarExtras to DTOs if needed
+            }).ToList();
+
+            return Ok(reservationDTOs);
+        }
+
+        /*// Get all reservations
         [HttpGet]
         [Authorize(Roles = "Admin,Agent")] // Only Admin and Agent can access all reservations
         public async Task<ActionResult<IEnumerable<ReservationDTO>>> GetAllReservations()
@@ -72,7 +204,7 @@ namespace RoadReady.Controllers
                 _logger.LogError(ex, "An error occurred while retrieving reservations.");
                 return StatusCode(500, new { message = "An unexpected error occurred." });
             }
-        }
+        }*/
 
         [HttpGet("{id}")]
         [Authorize(Roles ="Customer")]
@@ -101,49 +233,54 @@ namespace RoadReady.Controllers
         [Authorize(Roles = "Customer")] // Only Customer can add reservations
         public async Task<IActionResult> AddReservation([FromBody] CreateReservationDTO reservationDTO)
         {
-            if (reservationDTO == null || reservationDTO.CarExtraIds == null)
+            if (reservationDTO == null)
             {
-                return BadRequest(new { message = "Reservation data and CarExtraIds are required." });
+                return BadRequest(new { message = "Reservation data is required." });
             }
 
             try
             {
-                // Fetch CarExtras based on the CarExtraIds provided
-                var carExtras = new List<CarExtra>();
-                foreach (var extraId in reservationDTO.CarExtraIds)
+                // Check if the CarExtraIds are provided and fetch the related CarExtras
+                List<CarExtra> carExtras = new List<CarExtra>();
+
+                // If CarExtraIds is not null and not empty, fetch CarExtras based on the provided CarExtraIds
+                if (reservationDTO.CarExtraIds != null && reservationDTO.CarExtraIds.Any())
                 {
-                    var carExtra = _carExtraRepository.GetCarExtraById(extraId);
-                    if (carExtra != null)
+                    // Fetch the CarExtras based on the provided CarExtraIds
+                    carExtras = await _carExtraRepository.GetCarExtrasByIdsAsync(reservationDTO.CarExtraIds);
+
+                    // If some CarExtras are missing, return an error
+                    if (carExtras.Count != reservationDTO.CarExtraIds.Count)
                     {
-                        carExtras.Add(carExtra);
-                    }
-                    else
-                    {
-                        // If a CarExtra does not exist, return an error message
-                        return BadRequest(new { message = $"CarExtra with ID {extraId} not found." });
+                        return BadRequest(new { message = "Some CarExtras were not found." });
                     }
                 }
 
                 // Map CreateReservationDTO to Reservation entity
                 var reservation = _mapper.Map<Reservation>(reservationDTO);
 
-                // Associate the CarExtras with the reservation
-                reservation.Extras = carExtras;  // Add CarExtras from carExtraIds only
+                // Associate the CarExtras with the reservation (empty or with extras)
+                reservation.Extras = carExtras;
 
                 // Save the reservation to the database
                 await _reservationRepository.AddReservationAsync(reservation);
 
-                // Map the saved reservation back to DTO
+                // Map the saved reservation back to ReservationDTO to return the result
                 var createdDTO = _mapper.Map<ReservationDTO>(reservation);
 
+                // Return a 201 Created response with the location of the newly created resource
                 return CreatedAtAction(nameof(GetReservationById), new { id = createdDTO.ReservationId }, createdDTO);
             }
             catch (Exception ex)
             {
+                // Log the error and return a 500 internal server error
                 _logger.LogError(ex, "An error occurred while adding a reservation.");
                 return StatusCode(500, new { message = "An error occurred while saving the reservation." });
             }
         }
+
+
+
 
 
         // Update an existing reservation

@@ -31,8 +31,9 @@ namespace RoadReady
                  Name = ce.Name,
                  Price = (decimal)ce.Price
              }).ToList()));
-
-            CreateMap<Reservation, CreateReservationDTO>().ReverseMap();  // Reservation to ReservationCreateDTO and vice versa
+            CreateMap<CreateReservationDTO, Reservation>()
+    .ForMember(dest => dest.Extras, opt => opt.MapFrom(src => src.CarExtraIds));
+            //CreateMap<Reservation, CreateReservationDTO>().ReverseMap();  // Reservation to ReservationCreateDTO and vice versa
             CreateMap<Reservation, UpdateReservationDTO>().ReverseMap();  // Reservation to ReservationUpdateDTO and vice versa
 
             // Mapping for User
