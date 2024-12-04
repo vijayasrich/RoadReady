@@ -54,7 +54,7 @@ namespace RoadReady.Controllers
                 var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
                 // Check if the user is an Admin or Agent - they can access all payments
-                if (User.IsInRole("Admin") || User.IsInRole("Agent"))
+                if (User.IsInRole("Admin") || User.IsInRole("agent"))
                 {
                     // Admin/Agent can see all payments
                     var payments = await _paymentRepository.GetAllPaymentsAsync();
@@ -67,7 +67,7 @@ namespace RoadReady.Controllers
                     var paymentDTOs = _mapper.Map<IEnumerable<PaymentDTO>>(payments);
                     return Ok(paymentDTOs);
                 }
-                else if (User.IsInRole("Customer"))
+                else if (User.IsInRole("customer"))
                 {
                     // Customer can only see their own payments
                     if (int.TryParse(userId, out int userIdInt))
@@ -121,7 +121,7 @@ namespace RoadReady.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Customer")]
+        [Authorize(Roles = "customer")]
         public async Task<IActionResult> AddPayment([FromBody] PaymentDTO paymentDTO)
         {
             if (paymentDTO == null)

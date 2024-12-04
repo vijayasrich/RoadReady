@@ -110,6 +110,7 @@ namespace RoadReady.Controllers
                 LastName = model.LastName,
                 Email = model.Email,
                 UserName = model.UserName,
+                Password=model.Password,
                 PhoneNumber = model.PhoneNumber,
                 Role = model.Role,
                 CreatedAt = model.CreatedAt,

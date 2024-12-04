@@ -20,7 +20,7 @@ public class ReviewRepository : IReviewRepository
         return await _context.Reviews.FirstOrDefaultAsync(r => r.CarId == carId);
     }
 
-public async Task<IEnumerable<Review>> GetAllReviewsAsync()
+    public async Task<IEnumerable<Review>> GetAllReviewsAsync()
     {
         return await _context.Reviews.ToListAsync();
     }
@@ -49,10 +49,10 @@ public async Task<IEnumerable<Review>> GetAllReviewsAsync()
         // Save changes to the database
         await _context.SaveChangesAsync();
     }
-    
-    
 
-   /* public async Task DeleteReviewByCarIdAsync(int carId)
+
+
+    public async Task DeleteReviewByCarIdAsync(int carId)
     {
         var review = await GetReviewByCarIdAsync(carId);
         if (review != null)
@@ -60,10 +60,10 @@ public async Task<IEnumerable<Review>> GetAllReviewsAsync()
             _context.Reviews.Remove(review);
             await _context.SaveChangesAsync();
         }
-    }*/
+    }
 
 
-   
 
-    
+
+
 }

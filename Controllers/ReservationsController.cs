@@ -10,7 +10,7 @@ namespace RoadReady.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Admin,Customer,Agent")]
+    [Authorize(Roles = "Admin,customer,agent")]
     public class ReservationsController : ControllerBase
     {
         private readonly IReservationRepository _reservationRepository;
@@ -27,7 +27,7 @@ namespace RoadReady.Controllers
         }
         // Get reservations by UserId
         [HttpGet("user/{userId}")]
-        [Authorize(Roles = "Customer")]
+        [Authorize(Roles = "customer")]
         public async Task<ActionResult<IEnumerable<ReservationDTO>>> GetReservationsByUserId(int userId)
         {
             try
@@ -53,7 +53,7 @@ namespace RoadReady.Controllers
 
         // Get all reservations
         [HttpGet]
-        [Authorize(Roles = "Admin,Agent")] // Only Admin and Agent can access all reservations
+        [Authorize(Roles = "Admin,agent")] // Only Admin and Agent can access all reservations
         public async Task<ActionResult<IEnumerable<ReservationDTO>>> GetAllReservations()
         {
             try
@@ -75,7 +75,7 @@ namespace RoadReady.Controllers
         }
 
         [HttpGet("{id}")]
-        [Authorize(Roles ="Customer")]
+        [Authorize(Roles ="customer")]
         public async Task<ActionResult<ReservationDTO>> GetReservationById(int id)
         {
             try
@@ -98,7 +98,7 @@ namespace RoadReady.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Customer")] // Only Customer can add reservations
+        [Authorize(Roles = "customer")] // Only Customer can add reservations
         public async Task<IActionResult> AddReservation([FromBody] CreateReservationDTO reservationDTO)
         {
             if (reservationDTO == null || reservationDTO.CarExtraIds == null)

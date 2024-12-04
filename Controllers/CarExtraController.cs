@@ -24,7 +24,7 @@ namespace RoadReady.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Admin,Customer,Agent")]
+        [Authorize(Roles = "Admin,customer,agent")]
         public IActionResult GetAllCarExtras()
         {
             try
@@ -44,7 +44,7 @@ namespace RoadReady.Controllers
         }
 
         [HttpGet("{id}")]
-        [Authorize(Roles = "Admin,Customer,Agent")]
+        [Authorize(Roles = "Admin,customer,agent")]
         public IActionResult GetCarExtraById(int id)
         {
             try
@@ -71,7 +71,7 @@ namespace RoadReady.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Admin,Agent")]
+        [Authorize(Roles = "Admin,agent")]
         public IActionResult AddCarExtra([FromBody] CreateCarExtraDTO createCarExtraDto)
         {
             if (!ModelState.IsValid)
@@ -104,7 +104,7 @@ namespace RoadReady.Controllers
         }
 
         [HttpPut("{id}")]
-        [Authorize(Roles = "Admin,Agent")]
+        [Authorize(Roles = "Admin,agent")]
         public IActionResult UpdateCarExtra(int id, [FromBody] UpdateCarExtraDTO updateCarExtraDto)
         {
             if (id != updateCarExtraDto.ExtraId)
@@ -136,7 +136,7 @@ namespace RoadReady.Controllers
         }
 
         [HttpDelete("{id}")]
-        [Authorize(Roles = "Admin,Agent")]
+        [Authorize(Roles = "Admin,agent")]
         public IActionResult DeleteCarExtra(int id)
         {
             try

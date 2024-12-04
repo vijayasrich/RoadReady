@@ -25,9 +25,8 @@ namespace RoadReady.Models
         [Required]
         [DateRange("PickupDate", ErrorMessage = "Drop-off date must be after the pickup date.")]
         public DateTime DropoffDate { get; set; }  // Made non-nullable
-
         public decimal TotalPrice { get; set; }  // Made non-nullable
-        public string? Status { get; set; }  
+        public string? Status { get; set; }
         public DateTime CreatedAt { get; set; }  // Made non-nullable
         public DateTime UpdatedAt { get; set; }  // Made non-nullable
 
@@ -35,10 +34,9 @@ namespace RoadReady.Models
         public virtual User? User { get; set; }
         public virtual ICollection<Payment>? Payments { get; set; }
         public virtual ICollection<CarExtra> Extras { get; set; }
-        
+
         public List<int> CarExtraIds { get; set; }  // List of CarExtraIds
     }
 
-   
-}
 
+}

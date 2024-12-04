@@ -39,7 +39,7 @@ namespace RoadReady.Controllers
                     return NotFound("No users found.");
                 }
 
-                if (User.IsInRole("Agent"))
+                if (User.IsInRole("agent"))
                 {
                     // Filter data for agents
                     var limitedUsersDto = _mapper.Map<IEnumerable<Models.DTO.UserDTO>>(users)
@@ -78,7 +78,7 @@ namespace RoadReady.Controllers
                     return NotFound($"User with ID {id} not found.");
                 }
 
-                if (User.IsInRole("Agent"))
+                if (User.IsInRole("agent"))
                 {
                     var limitedUserDto = new
                     {
@@ -103,7 +103,7 @@ namespace RoadReady.Controllers
 
         // POST: api/User
         [HttpPost]
-        [Authorize(Roles = "Customer")]
+        [Authorize(Roles = "customer")]
         public async Task<IActionResult> CreateUser([FromBody] Models.DTO.UserDTO userDto)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -125,7 +125,7 @@ namespace RoadReady.Controllers
 
         // PUT: api/User/{id}
         [HttpPut("{id}")]
-        [Authorize(Roles = "Customer")]
+        [Authorize(Roles = "customer")]
         public async Task<IActionResult> UpdateUser(int id, [FromBody] Models.DTO.UserDTO userDto)
         {
             if (id != userDto.UserId) return BadRequest("User ID mismatch.");
