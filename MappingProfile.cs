@@ -25,15 +25,18 @@ namespace RoadReady
 
             // Mapping for Reservation
             CreateMap<Reservation, ReservationDTO>()
-             .ForMember(dest => dest.Extras, opt => opt.MapFrom(src => src.Extras.Select(ce => new CarExtraDTO
-             {
-                 ExtraId = ce.ExtraId,
-                 Name = ce.Name,
-                 Price = (decimal)ce.Price
-             }).ToList()));
+                .ForMember(dest => dest.Extras, opt => opt.MapFrom(src => src.Extras.Select(ce => new CarExtraDTO
+                {
+                    ExtraId = ce.ExtraId,
+                    Name = ce.Name,
+                    Price = (decimal)ce.Price
+                }).ToList()));
+
+            // Mapping for CreateReservationDTO to Reservation
             CreateMap<CreateReservationDTO, Reservation>()
-    .ForMember(dest => dest.Extras, opt => opt.MapFrom(src => src.CarExtraIds));
-            //CreateMap<Reservation, CreateReservationDTO>().ReverseMap();  // Reservation to ReservationCreateDTO and vice versa
+                .ForMember(dest => dest.Extras, opt => opt.MapFrom(src =>
+                    src.CarExtraIds.Select(id => new CarExtra { ExtraId = id }).ToList()));  // Map the CarExtraIds to the Extras collection in Reservation
+
             CreateMap<Reservation, UpdateReservationDTO>().ReverseMap();  // Reservation to ReservationUpdateDTO and vice versa
 
             // Mapping for User
@@ -48,15 +51,6 @@ namespace RoadReady
 
             CreateMap<PasswordReset, PasswordResetDTO>().ReverseMap();
             CreateMap<ReviewRequestDTO, Review>().ReverseMap();
-           /*CreateMap<PasswordReset, PasswordResetRequestDTO>().ReverseMap();
-            CreateMap<PasswordReset, PasswordResetResponseDTO>().ReverseMap();
-
-            // Mapping for PasswordReset to PasswordResetCreateDTO and vice versa
-            CreateMap<PasswordReset, PasswordResetCreateDTO>().ReverseMap();
-
-            // Mapping for PasswordReset to PasswordResetUpdateDTO and vice versa
-            CreateMap<PasswordReset, PasswordResetUpdateDTO>().ReverseMap();*/
         }
     }
 }
-

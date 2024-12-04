@@ -25,11 +25,15 @@ namespace RoadReady.Repositories
         }
         public async Task<List<CarExtra>> GetCarExtrasByIdsAsync(List<int> carExtraIds)
         {
+            if (carExtraIds == null || !carExtraIds.Any())
+            {
+                return new List<CarExtra>();
+            }
             return await _context.CarExtras
                 .Where(ce => carExtraIds.Contains(ce.ExtraId))
                 .ToListAsync();
         }
-
+        
         public void AddCarExtra(CarExtra carExtra)
         {
             _context.CarExtras.Add(carExtra);

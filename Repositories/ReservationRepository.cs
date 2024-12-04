@@ -112,6 +112,23 @@ public class ReservationRepository : IReservationRepository
         // Save changes to the database
         await _context.SaveChangesAsync();
     }
+    public async Task<bool> UpdateReservationStatusAsync(int reservationId, string status)
+    {
+        var existingReservation = await _context.Reservations
+            .FirstOrDefaultAsync(r => r.ReservationId == reservationId);
+
+        if (existingReservation == null)
+        {
+            return false; // Reservation not found
+        }
+
+        // Update only the status
+        existingReservation.Status = status;
+
+        // Save changes
+        await _context.SaveChangesAsync();
+        return true;
+    }
 
 
 

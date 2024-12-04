@@ -240,45 +240,105 @@ namespace RoadReady.Controllers
 
             try
             {
-                // Check if the CarExtraIds are provided and fetch the related CarExtras
+                // Check if CarExtraIds are provided and fetch the related CarExtras
                 List<CarExtra> carExtras = new List<CarExtra>();
 
-                // If CarExtraIds is not null and not empty, fetch CarExtras based on the provided CarExtraIds
                 if (reservationDTO.CarExtraIds != null && reservationDTO.CarExtraIds.Any())
                 {
                     // Fetch the CarExtras based on the provided CarExtraIds
                     carExtras = await _carExtraRepository.GetCarExtrasByIdsAsync(reservationDTO.CarExtraIds);
 
-                    // If some CarExtras are missing, return an error
+                    // If there are CarExtras that don't exist in the database, handle this case
                     if (carExtras.Count != reservationDTO.CarExtraIds.Count)
                     {
-                        return BadRequest(new { message = "Some CarExtras were not found." });
+                        var missingIds = reservationDTO.CarExtraIds.Except(carExtras.Select(ce => ce.ExtraId)).ToList();
+                        return NotFound(new { message = "Some CarExtraIds were not found.", missingIds });
                     }
                 }
 
-                // Map CreateReservationDTO to Reservation entity
+                // Map the DTO to the Reservation model
                 var reservation = _mapper.Map<Reservation>(reservationDTO);
 
-                // Associate the CarExtras with the reservation (empty or with extras)
+                // Add the related CarExtras to the reservation
                 reservation.Extras = carExtras;
 
-                // Save the reservation to the database
+                // Set the CreatedAt and UpdatedAt fields
+                reservation.CreatedAt = DateTime.UtcNow;
+                reservation.UpdatedAt = DateTime.UtcNow;
+
+                // Add the reservation
                 await _reservationRepository.AddReservationAsync(reservation);
 
-                // Map the saved reservation back to ReservationDTO to return the result
-                var createdDTO = _mapper.Map<ReservationDTO>(reservation);
-
-                // Return a 201 Created response with the location of the newly created resource
-                return CreatedAtAction(nameof(GetReservationById), new { id = createdDTO.ReservationId }, createdDTO);
+                // Return the created reservation data
+                var createdReservationDTO = _mapper.Map<ReservationDTO>(reservation);
+                return CreatedAtAction(nameof(GetReservationById), new { id = reservation.ReservationId }, createdReservationDTO);
             }
             catch (Exception ex)
             {
-                // Log the error and return a 500 internal server error
-                _logger.LogError(ex, "An error occurred while adding a reservation.");
-                return StatusCode(500, new { message = "An error occurred while saving the reservation." });
+                _logger.LogError(ex, "Error occurred while creating reservation");
+
+                // Return a more detailed error response
+                return StatusCode(500, new { message = "An unexpected error occurred.", details = ex.Message });
             }
         }
 
+
+
+
+        [HttpPut("{id}/status")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> UpdateReservationStatus(int id, [FromBody] UpdateReservationStatusDTO statusDTO)
+        {
+            try
+            {
+                // Validate input data
+                if (statusDTO == null || id != statusDTO.ReservationId)
+                {
+                    return BadRequest(new { message = "Invalid reservation data or ID mismatch." });
+                }
+
+                // Call the service/repository to update the reservation status
+                var result = await _reservationRepository.UpdateReservationStatusAsync(id, statusDTO.Status);
+
+                if (result)
+                    return Ok(new { message = "Reservation status updated successfully." });
+
+                return NotFound(new { message = "Reservation not found." });
+            }
+            catch (Exception ex)
+            {
+                // Log the exception for debugging
+                _logger.LogError($"Error updating reservation status: {ex.Message}");
+                return StatusCode(500, new { message = "An unexpected error occurred." });
+            }
+        }
+
+        /*[HttpPut("{id}")]
+        [Authorize(Roles ="Admin")]
+        public async Task<IActionResult> UpdateReservation(int id, [FromBody] UpdateReservationDTO reservationDTO)
+        {
+            try
+            {
+                if (reservationDTO == null || id != reservationDTO.ReservationId)
+                {
+                    return BadRequest(new { message = "Invalid reservation data or ID mismatch." });
+                }
+
+                // Perform the update logic
+                var result = await _reservationRepository.UpdateReservationAsync(reservationDTO);
+
+                if (result)
+                    return Ok(new { message = "Reservation updated successfully." });
+
+                return NotFound(new { message = "Reservation not found." });
+            }
+            catch (Exception ex)
+            {
+                // Log the exception (you can use any logging framework like Serilog or NLog)
+                _logger.LogError($"Error updating reservation: {ex.Message}");
+                return StatusCode(500, new { message = "An unexpected error occurred." });
+            }
+        }*/
 
 
 
