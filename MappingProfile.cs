@@ -46,6 +46,7 @@ namespace RoadReady
             CreateMap<Review, UpdateReviewsDTO>().ReverseMap();  // Review to ReviewUpdateDTO and vice versa
 
             CreateMap<PasswordReset, PasswordResetDTO>().ReverseMap();
+            CreateMap<ReviewRequestDTO, Review>().ReverseMap();
            /*CreateMap<PasswordReset, PasswordResetRequestDTO>().ReverseMap();
             CreateMap<PasswordReset, PasswordResetResponseDTO>().ReverseMap();
 

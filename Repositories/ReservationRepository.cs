@@ -20,6 +20,13 @@ public class ReservationRepository : IReservationRepository
             .Where(r => r.UserId == userId)
             .ToListAsync();
     }
+    public async Task<Reservation> GetCompletedReservationAsync(int userId, int carId)
+    {
+        return await _context.Reservations
+            .Where(r => r.UserId == userId && r.CarId == carId
+                        && r.DropoffDate < DateTime.Now)  // Drop-off date must be before current date/time
+            .FirstOrDefaultAsync();
+    }
     /*public async Task<IEnumerable<Reservation>> GetReservationsByUserIdAsync(string userId)
     {
         // Convert the userId (string) to int

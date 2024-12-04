@@ -2,9 +2,14 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using RoadReady.Authentication;
 using RoadReady.Models;
 using RoadReady.Models.DTO;
 using RoadReady.Repositories;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace RoadReady.Controllers
 {
@@ -13,14 +18,23 @@ namespace RoadReady.Controllers
     public class ReviewsController : ControllerBase
     {
         private readonly IReviewRepository _reviewRepository;
+        private readonly IReservationRepository _reservationRepository;
         private readonly ILogger<ReviewsController> _logger;
         private readonly IMapper _mapper;
+        private readonly RoadReadyContext _roadReadycontext;
 
-        public ReviewsController(IReviewRepository reviewRepository, ILogger<ReviewsController> logger, IMapper mapper)
+        public ReviewsController(
+            IReviewRepository reviewRepository,
+            IReservationRepository reservationRepository, // Assuming you have a Reservation repository
+            ILogger<ReviewsController> logger,
+            IMapper mapper,
+            RoadReadyContext roadReadycontext)
         {
             _reviewRepository = reviewRepository;
+            _reservationRepository = reservationRepository;
             _logger = logger;
             _mapper = mapper;
+            _roadReadycontext = roadReadycontext;
         }
 
         // GET: api/Reviews
@@ -69,7 +83,45 @@ namespace RoadReady.Controllers
             }
         }
 
-        // POST: api/Reviews
+        [HttpPost("addReview")]
+        public async Task<IActionResult> AddReview([FromBody] ReviewRequestDTO reviewRequest)
+        {
+            try
+            {
+                // Check if the user has a completed reservation for the car
+                var completedReservation = await _reservationRepository.GetCompletedReservationAsync(reviewRequest.UserId, reviewRequest.CarId);
+
+                if (completedReservation == null)
+                {
+                    return BadRequest("You can only review cars you have completed reservations for.");
+                }
+
+   
+                var review = new Review
+                {
+                    UserId = reviewRequest.UserId,
+                    CarId = reviewRequest.CarId,
+                    Rating = reviewRequest.Rating,
+                    ReviewText = reviewRequest.ReviewText,
+                    CreatedAt = DateTime.Now // Set the review creation time to now
+                };
+
+                // Add the review to the database
+                _roadReadycontext.Reviews.Add(review);
+                await _roadReadycontext.SaveChangesAsync();
+
+                return Ok("Review added successfully.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while adding the review.");
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+
+
+        /*// POST: api/Reviews
         [HttpPost]
         [Authorize(Roles = "Customer")]
         public async Task<IActionResult> AddReview([FromBody] ReviewsDTO reviewDto)
@@ -97,7 +149,7 @@ namespace RoadReady.Controllers
                 _logger.LogError(ex, "An error occurred while adding a new review.");
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
-        }
+        }*/
 
         // PUT: api/Reviews/ByCar/{carId}
         /*[HttpPut("ByCar/{carId}")]
@@ -134,13 +186,12 @@ namespace RoadReady.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }*/
-    }
-}
 
 
 
 
-        /*[HttpDelete("ByCar/{carId}")]
+
+        [HttpDelete("ByCar/{carId}")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteReview(int carId)
         {
@@ -162,7 +213,9 @@ namespace RoadReady.Controllers
                 _logger.LogError(ex, $"An error occurred while deleting the review for Car ID {carId}.");
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
-        }*/
+        }
+    }
+}
 
     
 

@@ -52,7 +52,7 @@ public async Task<IEnumerable<Review>> GetAllReviewsAsync()
     
     
 
-   /* public async Task DeleteReviewByCarIdAsync(int carId)
+    public async Task DeleteReviewByCarIdAsync(int carId)
     {
         var review = await GetReviewByCarIdAsync(carId);
         if (review != null)
@@ -60,7 +60,7 @@ public async Task<IEnumerable<Review>> GetAllReviewsAsync()
             _context.Reviews.Remove(review);
             await _context.SaveChangesAsync();
         }
-    }*/
+    }
 
 
    
