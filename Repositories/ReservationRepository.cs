@@ -20,23 +20,44 @@ public class ReservationRepository : IReservationRepository
             .Where(r => r.UserId == userId)
             .ToListAsync();
     }
+    public async Task<bool> CancelReservationAsync(int reservationId, int userId)
+    {
+        var reservation = await _context.Reservations
+            .FirstOrDefaultAsync(r => r.ReservationId == reservationId);
+
+        if (reservation == null)
+        {
+            throw new InvalidOperationException("Reservation not found.");
+        }
+
+        // Ensure only pending reservations can be canceled
+        if (reservation.Status != "pending")
+        {
+            throw new InvalidOperationException("Only reservations with 'Pending' status can be canceled.");
+        }
+
+        if (reservation.UserId != userId)
+        {
+            throw new UnauthorizedAccessException("You do not have permission to cancel this reservation.");
+        }
+
+        // Set the status to 'Canceled' or perform your cancellation logic
+        reservation.Status = "Canceled";
+        _context.Reservations.Update(reservation);
+        await _context.SaveChangesAsync();
+
+        return true;
+    }
+
+
     public async Task<Reservation> GetCompletedReservationAsync(int userId, int carId)
     {
         return await _context.Reservations
             .Where(r => r.UserId == userId && r.CarId == carId
-                        && r.DropoffDate < DateTime.Now)  // Drop-off date must be before current date/time
+                        && r.DropoffDate < DateTime.Now)  
             .FirstOrDefaultAsync();
     }
-    /*public async Task<IEnumerable<Reservation>> GetReservationsByUserIdAsync(string userId)
-    {
-        // Convert the userId (string) to int
-        int userIntId = int.Parse(userId);
-
-        return await _context.Reservations
-                             .Where(r => r.UserId == userIntId)  // Now both sides are int
-                             .ToListAsync();
-    }
-    */
+   
 
 
     public async Task<Reservation> GetReservationByIdAsync(int id)
@@ -54,29 +75,14 @@ public class ReservationRepository : IReservationRepository
 
     }
 
-    /*public async Task AddReservationAsync(Reservation reservation)
-    {
-        // Load CarExtras based on the CarExtraIds
-        if (reservation.CarExtraIds != null && reservation.CarExtraIds.Any())
-        {
-            var selectedExtras = await _context.CarExtras
-                                               .Where(extra => reservation.CarExtraIds.Contains(extra.ExtraId))
-                                               .ToListAsync();
-
-            // Add the selected CarExtras to the reservation
-            foreach (var extra in selectedExtras)
-            {
-                reservation.Extras.Add(extra);
-            }
-        }
-
-        await _context.Reservations.AddAsync(reservation);
-        await _context.SaveChangesAsync();
-    }
-    */
-    // In the repository:
+   
     public async Task<Reservation> AddReservationAsync(Reservation reservation)
     {
+        if (string.IsNullOrEmpty(reservation.Status))
+        {
+            reservation.Status = "pending"; // Default status is set to "pending"
+        }
+
         await _context.Reservations.AddAsync(reservation);
         await _context.SaveChangesAsync();
         return reservation;  // Return the saved reservation

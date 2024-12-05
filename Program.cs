@@ -63,7 +63,7 @@ namespace RoadReady
             builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
             builder.Services.AddScoped<IPasswordResetRepository, PasswordResetRepository>();
             builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
-            builder.Services.AddScoped<IAdminDashboardDataRepository, AdminDashboardDataRepository>();
+           
             builder.Services.AddScoped<ICarExtraRepository, CarExtraRepository>();
             builder.Services.AddTransient<IEmailRepository, EmailRepository>();
 

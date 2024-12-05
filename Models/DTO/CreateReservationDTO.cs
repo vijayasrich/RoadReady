@@ -7,7 +7,7 @@
         public DateTime PickupDate { get; set; }
         public DateTime DropoffDate { get; set; }
         public decimal TotalPrice { get; set; }
-        public List<int> CarExtraIds { get; set; } // List of extra IDs
+        public List<int> CarExtraIds { get; set; } 
         public string Status { get; set; }
     }
 }

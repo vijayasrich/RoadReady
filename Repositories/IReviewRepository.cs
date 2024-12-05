@@ -9,7 +9,7 @@ namespace RoadReady.Repositories
         Task AddReviewAsync(Review review);
 
         Task UpdateReviewAsync(Review review);
-        Task DeleteReviewByCarIdAsync(int id);
+        
         
     }
 }

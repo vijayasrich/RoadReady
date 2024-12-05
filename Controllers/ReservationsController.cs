@@ -29,30 +29,7 @@ namespace RoadReady.Controllers
             _mapper = mapper;
             _context=context;
         }
-        /*// Get reservations by UserId
-        [HttpGet("user/{userId}")]
-        [Authorize(Roles = "Customer")]
-        public async Task<ActionResult<IEnumerable<ReservationDTO>>> GetReservationsByUserId(int userId)
-        {
-            try
-            {
-                // Retrieve reservations for the given userId
-                var reservations = await _reservationRepository.GetReservationsByUserIdAsync(userId);
-                if (!reservations.Any())
-                {
-                    return NotFound(new { message = $"No reservations found for user with ID {userId}." });
-                }
-
-                // Map the reservations to DTOs
-                var reservationDTOs = _mapper.Map<List<ReservationDTO>>(reservations);
-                return Ok(reservationDTOs);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"An error occurred while retrieving reservations for user with ID {userId}.");
-                return StatusCode(500, new { message = "An unexpected error occurred." });
-            }
-        }*/
+        
         [HttpGet("all/{userId}")]
         [Authorize(Roles = "Customer")]
         public async Task<IActionResult> GetReservationsByUserId(int userId)
@@ -124,37 +101,10 @@ namespace RoadReady.Controllers
             }
         }
 
-        /*[HttpGet("all/{userId}")]
-        [Authorize(Roles ="Customer")]
-        public async Task<IActionResult> GetReservationsByUserId(int userId)
-        {
-            try
-            {
-                var reservations = await _context.Reservations
-                    .Where(r => r.UserId == userId)
-                    .ToListAsync();
-
-                // Filter for completed reservations based on DropOffDate
-                var completedReservations = reservations.Where(r => r.DropoffDate < DateTime.Now).ToList();
-                var ongoingReservations = reservations.Where(r => r.DropoffDate >= DateTime.Now).ToList();
-
-                var response = new
-                {
-                    completedReservations = completedReservations,
-                    ongoingReservations = ongoingReservations
-                };
-
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
-            }
-        }
-        */
+       
 
         [HttpGet]
-        [Authorize(Roles = "Admin,Agent")] // Only Admin and Agent can access all reservations
+        [Authorize(Roles = "Admin")] 
         public async Task<ActionResult<IEnumerable<ReservationDTO>>> GetAllReservations()
         {
             var reservations = await _context.Reservations
@@ -183,31 +133,10 @@ namespace RoadReady.Controllers
             return Ok(reservationDTOs);
         }
 
-        /*// Get all reservations
-        [HttpGet]
-        [Authorize(Roles = "Admin,Agent")] // Only Admin and Agent can access all reservations
-        public async Task<ActionResult<IEnumerable<ReservationDTO>>> GetAllReservations()
-        {
-            try
-            {
-                var reservations = await _reservationRepository.GetAllReservationsAsync();
-                if (!reservations.Any())
-                {
-                    return NotFound(new { message = "No reservations found." });
-                }
 
-                var reservationDTOs = _mapper.Map<List<ReservationDTO>>(reservations);
-                return Ok(reservationDTOs);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "An error occurred while retrieving reservations.");
-                return StatusCode(500, new { message = "An unexpected error occurred." });
-            }
-        }*/
 
         [HttpGet("{id}")]
-        [Authorize(Roles ="Customer")]
+        [Authorize(Roles = "Customer")]
         public async Task<ActionResult<ReservationDTO>> GetReservationById(int id)
         {
             try
@@ -312,91 +241,42 @@ namespace RoadReady.Controllers
                 return StatusCode(500, new { message = "An unexpected error occurred." });
             }
         }
-
-        /*[HttpPut("{id}")]
-        [Authorize(Roles ="Admin")]
-        public async Task<IActionResult> UpdateReservation(int id, [FromBody] UpdateReservationDTO reservationDTO)
+        
+        [HttpDelete("cancel/{id}")]
+        [Authorize(Roles = "Customer")]
+        public async Task<IActionResult> CancelReservation(int id)
         {
             try
             {
-                if (reservationDTO == null || id != reservationDTO.ReservationId)
+                var userId = int.Parse(User.FindFirst("userId")?.Value);
+
+                var success = await _reservationRepository.CancelReservationAsync(id, userId);
+
+                if (!success)
                 {
-                    return BadRequest(new { message = "Invalid reservation data or ID mismatch." });
+                    return NotFound(new { message = "Reservation not found or you do not have permission to cancel this reservation." });
                 }
 
-                // Perform the update logic
-                var result = await _reservationRepository.UpdateReservationAsync(reservationDTO);
-
-                if (result)
-                    return Ok(new { message = "Reservation updated successfully." });
-
-                return NotFound(new { message = "Reservation not found." });
+                return Ok(new { message = "Reservation canceled successfully." });
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogError($"Invalid operation error while canceling reservation {id}: {ex.Message}");
+                return BadRequest(new { message = ex.Message });
             }
             catch (Exception ex)
             {
-                // Log the exception (you can use any logging framework like Serilog or NLog)
-                _logger.LogError($"Error updating reservation: {ex.Message}");
+                _logger.LogError($"Error occurred while canceling reservation {id}: {ex.Message}, StackTrace: {ex.StackTrace}");
                 return StatusCode(500, new { message = "An unexpected error occurred." });
             }
-        }*/
+        }
+
+    
 
 
 
-
-        // Update an existing reservation
-        /*[HttpPut("{id}")]
-        [Authorize(Roles = "Admin,Agent,Customer")]
-        public async Task<IActionResult> UpdateReservation(int id, [FromBody] ReservationDTO reservationDTO)
-        {
-            if (reservationDTO == null || id != reservationDTO.ReservationId)
-            {
-                return BadRequest(new { message = "Invalid reservation data or ID mismatch." });
-            }
-
-            try
-            {
-                var existingReservation = await _reservationRepository.GetReservationByIdAsync(id);
-                if (existingReservation == null)
-                {
-                    return NotFound(new { message = $"Reservation with ID {id} not found." });
-                }
-
-                var reservation = _mapper.Map(reservationDTO, existingReservation);
-                await _reservationRepository.UpdateReservationAsync(reservation);
-
-                return NoContent();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"An error occurred while updating the reservation with ID {id}.");
-                return StatusCode(500, new { message = "An unexpected error occurred." });
-            }
-        }*/
-
-        // Delete a reservation
-        /*[HttpDelete("{id}")]
-        [Authorize(Roles = "Admin,Agent")]
-        public async Task<IActionResult> DeleteReservation(int id)
-        {
-            try
-            {
-                var reservation = await _reservationRepository.GetReservationByIdAsync(id);
-                if (reservation == null)
-                {
-                    return NotFound(new { message = $"Reservation with ID {id} not found." });
-                }
-
-                await _reservationRepository.DeleteReservationAsync(id);
-                return NoContent();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"An error occurred while deleting the reservation with ID {id}.");
-                return StatusCode(500, new { message = "An unexpected error occurred." });
-            }
-        }*/
-        [HttpDelete("{id}")]
-        [Authorize(Roles = "Admin")] // Restricting this action only to Admin role
+    [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin,Customer")] 
         public async Task<IActionResult> DeleteReservation(int id)
         {
             try

@@ -13,6 +13,7 @@ namespace RoadReady.Repositories
         Task<IEnumerable<Reservation>> GetReservationsByUserIdAsync(int userId);
         Task<Reservation> GetCompletedReservationAsync(int userId, int carId);
         Task<bool> UpdateReservationStatusAsync(int reservationId, string status);
+        Task<bool> CancelReservationAsync(int reservationId, int userId);
         //Task<IEnumerable<Reservation>> GetReservationsByUserIdAsync(string userId);
 
     }

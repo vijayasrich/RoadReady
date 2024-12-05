@@ -11,7 +11,7 @@ namespace RoadReady.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize]
+    
     public class UserController : ControllerBase
     {
         private readonly IUserRepository _userRepository;
@@ -25,9 +25,9 @@ namespace RoadReady.Controllers
             _mapper = mapper;
         }
 
-        // GET: api/User
+       
         [HttpGet]
-        //[Authorize(Roles = "Admin,Agent")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAllUsers()
         {
             try
@@ -64,9 +64,9 @@ namespace RoadReady.Controllers
             }
         }
 
-        // GET: api/User/{id}
+        
         [HttpGet("{id}")]
-        //[Authorize(Roles = "Customer")]
+        [Authorize(Roles = "Customer")]
         public async Task<IActionResult> GetUserById(int id)
         {
             try
@@ -101,7 +101,7 @@ namespace RoadReady.Controllers
             }
         }
 
-        // POST: api/User
+       
         [HttpPost]
         [Authorize(Roles = "Customer")]
         public async Task<IActionResult> CreateUser([FromBody] Models.DTO.UserDTO userDto)
@@ -123,7 +123,7 @@ namespace RoadReady.Controllers
             }
         }
 
-        // PUT: api/User/{id}
+       
         [HttpPut("{id}")]
         [Authorize(Roles = "Customer")]
         public async Task<IActionResult> UpdateUser(int id, [FromBody] Models.DTO.UserDTO userDto)
@@ -151,42 +151,6 @@ namespace RoadReady.Controllers
             }
         }
 
-        // DELETE: api/User/{id}
-        /*[HttpDelete("{id}")]
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> DeleteUser(int id)
-        {
-            try
-            {
-                var user = await _userRepository.GetUserByIdAsync(id);
-
-                if (user == null)
-                {
-                    _logger.LogWarning($"User with ID {id} was not found.");
-                    return NotFound(new { message = $"User with ID {id} was not found." });
-                }
-
-                await _userRepository.DeleteUserAsync(id);
-
-                _logger.LogInformation($"User with ID {id} successfully deleted.");
-                return Ok(new { message = $"User with ID {id} has been deleted." });
-            }
-            catch (NotFoundException ex)
-            {
-                _logger.LogWarning(ex, ex.Message);
-                return NotFound(new { message = ex.Message });
-            }
-            catch (DbUpdateException dbEx)
-            {
-                _logger.LogError(dbEx, $"Database update error while deleting the user with ID {id}.");
-                return StatusCode(500, new { message = "Database error occurred.", details = dbEx.Message });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"An unexpected error occurred while deleting the user with ID {id}.");
-                return StatusCode(500, new { message = "An unexpected error occurred.", details = ex.Message });
-            }
-        }*/
     }
 }
 

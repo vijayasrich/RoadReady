@@ -159,36 +159,7 @@ namespace RoadReady.Controllers
 
 
 
-        // Endpoint to get all password reset records (for admin or debugging purposes)
-        /*[HttpGet("all-resets")]
-        [AllowAnonymous]
-        public async Task<IActionResult> GetAllPasswordResets()
-        {
-            var resets = await _dbContext.PasswordResets
-                .Include(pr => pr.User)
-                .ToListAsync();
-
-            var resetDtos = _mapper.Map<List<PasswordResetDTO>>(resets);
-            return Ok(resetDtos);
-        }
-
-        // Endpoint to get a single password reset record by token
-        [HttpGet("reset/{resetToken}")]
-        [AllowAnonymous]
-        public async Task<IActionResult> GetPasswordResetByToken(string resetToken)
-        {
-            var passwordReset = await _dbContext.PasswordResets
-                .Include(pr => pr.User)
-                .FirstOrDefaultAsync(pr => pr.ResetToken == resetToken);
-
-            if (passwordReset == null)
-            {
-                return NotFound("Password reset record not found.");
-            }
-
-            var resetDto = _mapper.Map<PasswordResetDTO>(passwordReset);
-            return Ok(resetDto);
-        }*/
+        
     }
 }
 

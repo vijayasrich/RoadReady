@@ -38,7 +38,7 @@ namespace RoadReady.Controllers
                 var authClaims = new List<Claim>
         {
             new Claim(ClaimTypes.Name, user.UserName),
-            new Claim("userId", user.Id.ToString()),  // user.Id will now be numeric
+            new Claim("userId", user.Id.ToString()),  
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };
 
@@ -82,7 +82,7 @@ namespace RoadReady.Controllers
                 SecurityStamp = Guid.NewGuid().ToString(),
             };
 
-            // Save to Identity database
+            // Saves to Identity database
             var result = await _userManager.CreateAsync(identityUser, model.Password);
             if (!result.Succeeded)
             {
@@ -90,7 +90,7 @@ namespace RoadReady.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User creation failed: " + errors });
             }
 
-            // Create the user role if it doesn't exist
+            // Creates the user role if it doesn't exist
             if (!await _roleManager.RoleExistsAsync(model.Role))
             {
                 var roleResult = await _roleManager.CreateAsync(new IdentityRole<int>(model.Role));
@@ -103,7 +103,7 @@ namespace RoadReady.Controllers
 
             await _userManager.AddToRoleAsync(identityUser, model.Role);
 
-            // Map to your custom User model
+           
             User customUser = new User()
             {
                 FirstName = model.FirstName,
@@ -126,44 +126,6 @@ namespace RoadReady.Controllers
 
 
 
-        /*[HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] RegisterModel model)
-        {
-            if (string.IsNullOrEmpty(model.Role))
-                return BadRequest(new Response { Status = "Error", Message = "Role is required." });
-
-            var userExists = await _userManager.FindByNameAsync(model.UserName);
-            if (userExists != null)
-                return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User already exists!" });
-
-            ApplicationUser user = new ApplicationUser()
-            {
-                UserName = model.UserName,
-                Email = model.Email,
-                SecurityStamp = Guid.NewGuid().ToString(),
-            };
-
-            var result = await _userManager.CreateAsync(user, model.Password);
-            if (!result.Succeeded)
-            {
-                var errors = string.Join(", ", result.Errors.Select(e => e.Description));
-                return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User creation failed: " + errors });
-            }
-
-            if (!await _roleManager.RoleExistsAsync(model.Role))
-            {
-                // Ensure IdentityRole<int> is used
-                var roleResult = await _roleManager.CreateAsync(new IdentityRole<int>(model.Role));
-                if (!roleResult.Succeeded)
-                {
-                    var roleErrors = string.Join(", ", roleResult.Errors.Select(e => e.Description));
-                    return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "Role creation failed: " + roleErrors });
-                }
-            }
-
-            await _userManager.AddToRoleAsync(user, model.Role);
-            return Ok(new Response { Status = "Success", Message = $"{model.Role} user created successfully!" });
-        }*/
 
     }
 }

@@ -24,7 +24,7 @@ namespace RoadReady.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Admin,Customer,Agent")]
+        [Authorize(Roles = "Admin,Customer")]
         public async Task<ActionResult<IEnumerable<CarDTO>>> GetAllCars()
         {
             try
@@ -44,7 +44,7 @@ namespace RoadReady.Controllers
         }
 
         [HttpGet("{id}")]
-        [Authorize(Roles = "Admin,Customer,Agent")]
+        [Authorize(Roles = "Admin,Customer")]
         public async Task<ActionResult<CarDTO>> GetCarById(int id)
         {
             try
@@ -71,7 +71,7 @@ namespace RoadReady.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Admin,Agent")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> AddCar([FromBody] CarDTO carDTO)
         {
             if (!ModelState.IsValid)
@@ -135,7 +135,7 @@ namespace RoadReady.Controllers
         }
 
         [HttpDelete("{id}")]
-        [Authorize(Roles = "Admin,Agent")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteCar(int id)
         {
             try

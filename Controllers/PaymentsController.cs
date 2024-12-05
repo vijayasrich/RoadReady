@@ -14,11 +14,11 @@ namespace RoadReady.Controllers
     {
         private readonly IPaymentRepository _paymentRepository;
         private readonly IMapper _mapper;
-        //private readonly IReservationRepository _reservationRepository;
+        
 
-        public PaymentsController(IPaymentRepository paymentRepository,/*IReservationRepository reservationRepository,*/IMapper mapper)
+        public PaymentsController(IPaymentRepository paymentRepository,IMapper mapper)
         {
-           // _reservationRepository = reservationRepository;
+          
             _paymentRepository = paymentRepository;
             _mapper = mapper;
         }
@@ -39,13 +39,13 @@ namespace RoadReady.Controllers
             }
             catch (Exception ex)
             {
-                // Handle exception (e.g., log it)
+                
                 return StatusCode(500, "Internal server error: " + ex.Message);
             }
         }
 
         [HttpGet]
-        //[Authorize(Roles = "Admin,Agent,Customer")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<IEnumerable<PaymentDTO>>> GetAllPayments()
         {
             try
@@ -99,7 +99,7 @@ namespace RoadReady.Controllers
         }
 
         [HttpGet("{id}")]
-        //[Authorize(Roles = "Admin,Agent,Customer")]
+        [Authorize(Roles = "Customer")]
         public async Task<ActionResult<PaymentDTO>> GetPaymentById(int id)
         {
             try
@@ -142,60 +142,7 @@ namespace RoadReady.Controllers
             }
         }
 
-        /*[HttpPut("{id}")]
-        [Authorize(Roles = "Admin,Customer")]
-        public async Task<IActionResult> UpdatePayment(int id, [FromBody] PaymentDTO paymentDTO)
-        {
-            if (paymentDTO == null)
-            {
-                return BadRequest("Payment data is required.");
-            }
-
-            if (id != paymentDTO.PaymentId)
-            {
-                return BadRequest("Payment ID mismatch.");
-            }
-
-            try
-            {
-                var existingPayment = await _paymentRepository.GetPaymentByIdAsync(id);
-                if (existingPayment == null)
-                {
-                    return NotFound($"Payment with ID {id} not found.");
-                }
-
-                var payment = _mapper.Map<Payment>(paymentDTO);
-                await _paymentRepository.UpdatePaymentAsync(payment);
-                return Ok(new { message = $"ID {id} has been updated." });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                    new { message = "An error occurred while updating the payment.", details = ex.Message });
-            }
-        }
-        
-        [HttpDelete("{id}")]
-        [Authorize(Roles = "Admin,Customer")]
-        public async Task<IActionResult> DeletePayment(int id)
-        {
-            try
-            {
-                var payment = await _paymentRepository.GetPaymentByIdAsync(id);
-                if (payment == null)
-                {
-                    return NotFound($"Payment with ID {id} not found.");
-                }
-
-                await _paymentRepository.DeletePaymentAsync(id);
-                return Ok(new { message = $"ID {id} has been deleted." });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                    new { message = "An error occurred while deleting the payment.", details = ex.Message });
-            }
-        }*/
+       
     }
 }
 

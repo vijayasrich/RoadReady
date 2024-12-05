@@ -9,8 +9,8 @@ namespace RoadReady.Authentication
     {
         public RoadReadyContext(DbContextOptions<RoadReadyContext> options)
             : base(options) { }
-        //public virtual DbSet<AdminActions> AdminActions { get; set; } = null!;
-        public virtual DbSet<AdminDashboardData> AdminDashboardData { get; set; } = null!;
+        
+       
         public virtual DbSet<Car> Cars { get; set; } = null!;
         public virtual DbSet<CarExtra> CarExtras { get; set; } = null!;
         public virtual DbSet<PasswordReset> PasswordResets { get; set; } = null!;
@@ -18,8 +18,7 @@ namespace RoadReady.Authentication
         public virtual DbSet<Reservation> Reservations { get; set; } = null!;
         public virtual DbSet<Review> Reviews { get; set; } = null!;
         public virtual DbSet<User> Users { get; set; } = null!;
-       // public virtual DbSet<UserAudit> UserAudits { get; set; } = null!;
-        //public virtual DbSet<ReservationExtra> ReservationExtras { get; set; } = null!;
+       
 
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -59,7 +58,7 @@ namespace RoadReady.Authentication
                     .HasConstraintName("FK__AdminActi__admin__571DF1D5");
             });*/
 
-            modelBuilder.Entity<AdminDashboardData>(entity =>
+            /*modelBuilder.Entity<AdminDashboardData>(entity =>
             {
                 entity.HasKey(e => e.DashboardId)
                     .HasName("PK__AdminDas__5E2AEAE69B9D34E7");
@@ -81,7 +80,7 @@ namespace RoadReady.Authentication
                 entity.Property(e => e.TotalReviews).HasColumnName("total_reviews");
 
                 entity.Property(e => e.TotalUsers).HasColumnName("total_users");
-            });
+            });*/
 
             modelBuilder.Entity<Car>(entity =>
             {

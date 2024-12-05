@@ -3,7 +3,7 @@
     public class UpdateReservationStatusDTO
     {
         public int ReservationId { get; set; }
-        public string Status { get; set; } // e.g., "confirmed", "cancelled"
+        public string Status { get; set; } 
     }
 
 }
