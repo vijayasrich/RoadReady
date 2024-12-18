@@ -133,6 +133,22 @@ namespace RoadReady.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, new { message = "An unexpected error occurred.", details = ex.Message });
             }
         }
+        [HttpGet("available-cars")]
+        [Authorize(Roles = "Customer")]
+        public async Task<IActionResult> GetAvailableCars()
+        {
+            try
+            {
+                var availableCars = await _carRepository.GetAvailableCarsAsync(); // Call repository method
+                var availableCarDTOs = _mapper.Map<IEnumerable<CarDTO>>(availableCars);
+                return Ok(availableCarDTOs);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "An error occurred while fetching available cars.");
+            }
+        }
+
 
         [HttpDelete("{id}")]
         [Authorize(Roles = "Admin")]

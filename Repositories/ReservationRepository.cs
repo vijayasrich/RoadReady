@@ -30,12 +30,6 @@ public class ReservationRepository : IReservationRepository
             throw new InvalidOperationException("Reservation not found.");
         }
 
-        // Ensure only pending reservations can be canceled
-        if (reservation.Status != "pending")
-        {
-            throw new InvalidOperationException("Only reservations with 'Pending' status can be canceled.");
-        }
-
         if (reservation.UserId != userId)
         {
             throw new UnauthorizedAccessException("You do not have permission to cancel this reservation.");

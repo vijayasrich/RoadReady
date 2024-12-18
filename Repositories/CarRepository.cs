@@ -36,7 +36,12 @@ public class CarRepository : ICarRepository
         _context.Cars.Update(car);
         await _context.SaveChangesAsync();
     }
-
+    public async Task<IEnumerable<Car>> GetAvailableCarsAsync()
+    {
+        return await _context.Cars
+            .Where(car => car.Availability == true)
+            .ToListAsync();
+    }
     public async Task DeleteCarAsync(int id)
     {
         var car = await GetCarByIdAsync(id);

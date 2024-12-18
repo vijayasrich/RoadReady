@@ -9,5 +9,6 @@ namespace RoadReady.Repositories
         Task AddCarAsync(Car car);
         Task UpdateCarAsync(Car car);
         Task DeleteCarAsync(int id);
+        Task<IEnumerable<Car>> GetAvailableCarsAsync();
     }
 }
