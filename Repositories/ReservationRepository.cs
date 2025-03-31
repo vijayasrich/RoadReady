@@ -35,7 +35,6 @@ public class ReservationRepository : IReservationRepository
             throw new UnauthorizedAccessException("You do not have permission to cancel this reservation.");
         }
 
-        // Set the status to 'Canceled' or perform your cancellation logic
         reservation.Status = "Canceled";
         _context.Reservations.Update(reservation);
         await _context.SaveChangesAsync();
