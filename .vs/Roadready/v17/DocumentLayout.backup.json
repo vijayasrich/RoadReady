@@ -1,0 +1,344 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\2000147597\\Documents\\Roadready\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{D9C4905E-86F8-4733-ABEB-5E55C63CA3E7}|RoadReady.csproj|c:\\users\\2000147597\\documents\\roadready\\controllers\\userscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D9C4905E-86F8-4733-ABEB-5E55C63CA3E7}|RoadReady.csproj|solutionrelative:controllers\\userscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D9C4905E-86F8-4733-ABEB-5E55C63CA3E7}|RoadReady.csproj|c:\\users\\2000147597\\documents\\roadready\\authentication\\userroles.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D9C4905E-86F8-4733-ABEB-5E55C63CA3E7}|RoadReady.csproj|solutionrelative:authentication\\userroles.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D9C4905E-86F8-4733-ABEB-5E55C63CA3E7}|RoadReady.csproj|c:\\users\\2000147597\\documents\\roadready\\controllers\\reviewscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D9C4905E-86F8-4733-ABEB-5E55C63CA3E7}|RoadReady.csproj|solutionrelative:controllers\\reviewscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D9C4905E-86F8-4733-ABEB-5E55C63CA3E7}|RoadReady.csproj|c:\\users\\2000147597\\documents\\roadready\\controllers\\reservationscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D9C4905E-86F8-4733-ABEB-5E55C63CA3E7}|RoadReady.csproj|solutionrelative:controllers\\reservationscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D9C4905E-86F8-4733-ABEB-5E55C63CA3E7}|RoadReady.csproj|c:\\users\\2000147597\\documents\\roadready\\controllers\\paymentscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D9C4905E-86F8-4733-ABEB-5E55C63CA3E7}|RoadReady.csproj|solutionrelative:controllers\\paymentscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D9C4905E-86F8-4733-ABEB-5E55C63CA3E7}|RoadReady.csproj|c:\\users\\2000147597\\documents\\roadready\\controllers\\carextracontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D9C4905E-86F8-4733-ABEB-5E55C63CA3E7}|RoadReady.csproj|solutionrelative:controllers\\carextracontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D9C4905E-86F8-4733-ABEB-5E55C63CA3E7}|RoadReady.csproj|c:\\users\\2000147597\\documents\\roadready\\controllers\\carscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D9C4905E-86F8-4733-ABEB-5E55C63CA3E7}|RoadReady.csproj|solutionrelative:controllers\\carscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D9C4905E-86F8-4733-ABEB-5E55C63CA3E7}|RoadReady.csproj|c:\\users\\2000147597\\documents\\roadready\\authentication\\roadreadycontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D9C4905E-86F8-4733-ABEB-5E55C63CA3E7}|RoadReady.csproj|solutionrelative:authentication\\roadreadycontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D9C4905E-86F8-4733-ABEB-5E55C63CA3E7}|RoadReady.csproj|c:\\users\\2000147597\\documents\\roadready\\models\\admindashboarddata.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D9C4905E-86F8-4733-ABEB-5E55C63CA3E7}|RoadReady.csproj|solutionrelative:models\\admindashboarddata.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D9C4905E-86F8-4733-ABEB-5E55C63CA3E7}|RoadReady.csproj|c:\\users\\2000147597\\documents\\roadready\\repositories\\admindashboarddatarepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D9C4905E-86F8-4733-ABEB-5E55C63CA3E7}|RoadReady.csproj|solutionrelative:repositories\\admindashboarddatarepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D9C4905E-86F8-4733-ABEB-5E55C63CA3E7}|RoadReady.csproj|c:\\users\\2000147597\\documents\\roadready\\repositories\\iadmindashboarddatarepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D9C4905E-86F8-4733-ABEB-5E55C63CA3E7}|RoadReady.csproj|solutionrelative:repositories\\iadmindashboarddatarepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D9C4905E-86F8-4733-ABEB-5E55C63CA3E7}|RoadReady.csproj|c:\\users\\2000147597\\documents\\roadready\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{D9C4905E-86F8-4733-ABEB-5E55C63CA3E7}|RoadReady.csproj|solutionrelative:appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D9C4905E-86F8-4733-ABEB-5E55C63CA3E7}|RoadReady.csproj|c:\\users\\2000147597\\documents\\roadready\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D9C4905E-86F8-4733-ABEB-5E55C63CA3E7}|RoadReady.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D9C4905E-86F8-4733-ABEB-5E55C63CA3E7}|RoadReady.csproj|c:\\users\\2000147597\\documents\\roadready\\roadready.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{D9C4905E-86F8-4733-ABEB-5E55C63CA3E7}|RoadReady.csproj|solutionrelative:roadready.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D9C4905E-86F8-4733-ABEB-5E55C63CA3E7}|RoadReady.csproj|c:\\users\\2000147597\\documents\\roadready\\controllers\\authenticationcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D9C4905E-86F8-4733-ABEB-5E55C63CA3E7}|RoadReady.csproj|solutionrelative:controllers\\authenticationcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Program Files\\dotnet\\sdk\\8.0.403\\Sdks\\Microsoft.NET.Sdk\\targets\\Microsoft.PackageDependencyResolution.targets||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D9C4905E-86F8-4733-ABEB-5E55C63CA3E7}|RoadReady.csproj|c:\\users\\2000147597\\documents\\roadready\\mappingprofile.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D9C4905E-86F8-4733-ABEB-5E55C63CA3E7}|RoadReady.csproj|solutionrelative:mappingprofile.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\2000147597\\Documents\\Roadready\\obj\\Debug\\net6.0\\RoadReady.AssemblyInfo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:obj\\Debug\\net6.0\\RoadReady.AssemblyInfo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D9C4905E-86F8-4733-ABEB-5E55C63CA3E7}|RoadReady.csproj|c:\\users\\2000147597\\documents\\roadready\\authentication\\applicationuser.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D9C4905E-86F8-4733-ABEB-5E55C63CA3E7}|RoadReady.csproj|solutionrelative:authentication\\applicationuser.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D9C4905E-86F8-4733-ABEB-5E55C63CA3E7}|RoadReady.csproj|c:\\users\\2000147597\\documents\\roadready\\migrations\\20250402040332_dbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D9C4905E-86F8-4733-ABEB-5E55C63CA3E7}|RoadReady.csproj|solutionrelative:migrations\\20250402040332_dbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 4,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "PaymentsController.cs",
+              "DocumentMoniker": "C:\\Users\\2000147597\\Documents\\Roadready\\Controllers\\PaymentsController.cs",
+              "RelativeDocumentMoniker": "Controllers\\PaymentsController.cs",
+              "ToolTip": "C:\\Users\\2000147597\\Documents\\Roadready\\Controllers\\PaymentsController.cs",
+              "RelativeToolTip": "Controllers\\PaymentsController.cs",
+              "ViewState": "AgIAAFsAAAAAAAAAAAAWwGUAAAAkAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-02T04:23:44.119Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "ReservationsController.cs",
+              "DocumentMoniker": "C:\\Users\\2000147597\\Documents\\Roadready\\Controllers\\ReservationsController.cs",
+              "RelativeDocumentMoniker": "Controllers\\ReservationsController.cs",
+              "ToolTip": "C:\\Users\\2000147597\\Documents\\Roadready\\Controllers\\ReservationsController.cs",
+              "RelativeToolTip": "Controllers\\ReservationsController.cs",
+              "ViewState": "AgIAABcAAAAAAAAAAIA0wCEAAAAkAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-02T04:24:11.992Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "ReviewsController.cs",
+              "DocumentMoniker": "C:\\Users\\2000147597\\Documents\\Roadready\\Controllers\\ReviewsController.cs",
+              "RelativeDocumentMoniker": "Controllers\\ReviewsController.cs",
+              "ToolTip": "C:\\Users\\2000147597\\Documents\\Roadready\\Controllers\\ReviewsController.cs",
+              "RelativeToolTip": "Controllers\\ReviewsController.cs",
+              "ViewState": "AgIAAEwAAAAAAAAAAAAWwFYAAAAkAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-02T04:24:51.69Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "UserRoles.cs",
+              "DocumentMoniker": "C:\\Users\\2000147597\\Documents\\Roadready\\Authentication\\UserRoles.cs",
+              "RelativeDocumentMoniker": "Authentication\\UserRoles.cs",
+              "ToolTip": "C:\\Users\\2000147597\\Documents\\Roadready\\Authentication\\UserRoles.cs",
+              "RelativeToolTip": "Authentication\\UserRoles.cs",
+              "ViewState": "AgIAAAQAAAAAAAAAAAAAAAUAAAAwAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-02T04:25:15.082Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "UsersController.cs",
+              "DocumentMoniker": "C:\\Users\\2000147597\\Documents\\Roadready\\Controllers\\UsersController.cs",
+              "RelativeDocumentMoniker": "Controllers\\UsersController.cs",
+              "ToolTip": "C:\\Users\\2000147597\\Documents\\Roadready\\Controllers\\UsersController.cs",
+              "RelativeToolTip": "Controllers\\UsersController.cs",
+              "ViewState": "AgIAAF8AAAAAAAAAAAAWwGAAAAAQAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-02T04:25:30.248Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "CarExtraController.cs",
+              "DocumentMoniker": "C:\\Users\\2000147597\\Documents\\Roadready\\Controllers\\CarExtraController.cs",
+              "RelativeDocumentMoniker": "Controllers\\CarExtraController.cs",
+              "ToolTip": "C:\\Users\\2000147597\\Documents\\Roadready\\Controllers\\CarExtraController.cs",
+              "RelativeToolTip": "Controllers\\CarExtraController.cs",
+              "ViewState": "AgIAACQAAAAAAAAAAAAWwC4AAAAqAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-02T03:55:33.1Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "CarsController.cs",
+              "DocumentMoniker": "C:\\Users\\2000147597\\Documents\\Roadready\\Controllers\\CarsController.cs",
+              "RelativeDocumentMoniker": "Controllers\\CarsController.cs",
+              "ToolTip": "C:\\Users\\2000147597\\Documents\\Roadready\\Controllers\\CarsController.cs",
+              "RelativeToolTip": "Controllers\\CarsController.cs",
+              "ViewState": "AgIAAH4AAAAAAAAAAAAWwIgAAAAkAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-02T03:55:01.146Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "RoadReadyContext.cs",
+              "DocumentMoniker": "C:\\Users\\2000147597\\Documents\\Roadready\\Authentication\\RoadReadyContext.cs",
+              "RelativeDocumentMoniker": "Authentication\\RoadReadyContext.cs",
+              "ToolTip": "C:\\Users\\2000147597\\Documents\\Roadready\\Authentication\\RoadReadyContext.cs",
+              "RelativeToolTip": "Authentication\\RoadReadyContext.cs",
+              "ViewState": "AgIAADIAAAAAAAAAAAAWwD8AAAAnAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-28T06:16:39.145Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "AdminDashboardData.cs",
+              "DocumentMoniker": "C:\\Users\\2000147597\\Documents\\Roadready\\Models\\AdminDashboardData.cs",
+              "RelativeDocumentMoniker": "Models\\AdminDashboardData.cs",
+              "ToolTip": "C:\\Users\\2000147597\\Documents\\Roadready\\Models\\AdminDashboardData.cs",
+              "RelativeToolTip": "Models\\AdminDashboardData.cs",
+              "ViewState": "AgIAAAUAAAAAAAAAAAAAAAUAAAAeAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-02T04:23:36.692Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "AdminDashboardDataRepository.cs",
+              "DocumentMoniker": "C:\\Users\\2000147597\\Documents\\Roadready\\Repositories\\AdminDashboardDataRepository.cs",
+              "RelativeDocumentMoniker": "Repositories\\AdminDashboardDataRepository.cs",
+              "ToolTip": "C:\\Users\\2000147597\\Documents\\Roadready\\Repositories\\AdminDashboardDataRepository.cs",
+              "RelativeToolTip": "Repositories\\AdminDashboardDataRepository.cs",
+              "ViewState": "AgIAABkAAAAAAAAAAAAWwCMAAAAaAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-02T04:23:37.119Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "IAdminDashboardDataRepository.cs",
+              "DocumentMoniker": "C:\\Users\\2000147597\\Documents\\Roadready\\Repositories\\IAdminDashboardDataRepository.cs",
+              "RelativeDocumentMoniker": "Repositories\\IAdminDashboardDataRepository.cs",
+              "ToolTip": "C:\\Users\\2000147597\\Documents\\Roadready\\Repositories\\IAdminDashboardDataRepository.cs",
+              "RelativeToolTip": "Repositories\\IAdminDashboardDataRepository.cs",
+              "ViewState": "AgIAAAQAAAAAAAAAAAAAAAsAAAArAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-02T04:23:42.046Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "C:\\Users\\2000147597\\Documents\\Roadready\\appsettings.json",
+              "RelativeDocumentMoniker": "appsettings.json",
+              "ToolTip": "C:\\Users\\2000147597\\Documents\\Roadready\\appsettings.json",
+              "RelativeToolTip": "appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAzAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-03-28T04:50:00.386Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "RoadReady.csproj",
+              "DocumentMoniker": "C:\\Users\\2000147597\\Documents\\Roadready\\RoadReady.csproj",
+              "RelativeDocumentMoniker": "RoadReady.csproj",
+              "ToolTip": "C:\\Users\\2000147597\\Documents\\Roadready\\RoadReady.csproj",
+              "RelativeToolTip": "RoadReady.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2025-03-28T04:49:24.526Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 19,
+              "Title": "20250402040332_dbcontext.cs",
+              "DocumentMoniker": "C:\\Users\\2000147597\\Documents\\Roadready\\Migrations\\20250402040332_dbcontext.cs",
+              "RelativeDocumentMoniker": "Migrations\\20250402040332_dbcontext.cs",
+              "ToolTip": "C:\\Users\\2000147597\\Documents\\Roadready\\Migrations\\20250402040332_dbcontext.cs",
+              "RelativeToolTip": "Migrations\\20250402040332_dbcontext.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-02T04:03:33.12Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "AuthenticationController.cs",
+              "DocumentMoniker": "C:\\Users\\2000147597\\Documents\\Roadready\\Controllers\\AuthenticationController.cs",
+              "RelativeDocumentMoniker": "Controllers\\AuthenticationController.cs",
+              "ToolTip": "C:\\Users\\2000147597\\Documents\\Roadready\\Controllers\\AuthenticationController.cs",
+              "RelativeToolTip": "Controllers\\AuthenticationController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-28T06:06:24.767Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\2000147597\\Documents\\Roadready\\Program.cs",
+              "RelativeDocumentMoniker": "Program.cs",
+              "ToolTip": "C:\\Users\\2000147597\\Documents\\Roadready\\Program.cs",
+              "RelativeToolTip": "Program.cs",
+              "ViewState": "AgIAAGAAAAAAAAAAAAAQwGoAAAANAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-28T11:30:38.467Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "Microsoft.PackageDependencyResolution.targets",
+              "DocumentMoniker": "C:\\Program Files\\dotnet\\sdk\\8.0.403\\Sdks\\Microsoft.NET.Sdk\\targets\\Microsoft.PackageDependencyResolution.targets",
+              "RelativeDocumentMoniker": "..\\..\\..\\..\\Program Files\\dotnet\\sdk\\8.0.403\\Sdks\\Microsoft.NET.Sdk\\targets\\Microsoft.PackageDependencyResolution.targets",
+              "ToolTip": "C:\\Program Files\\dotnet\\sdk\\8.0.403\\Sdks\\Microsoft.NET.Sdk\\targets\\Microsoft.PackageDependencyResolution.targets",
+              "RelativeToolTip": "..\\..\\..\\..\\Program Files\\dotnet\\sdk\\8.0.403\\Sdks\\Microsoft.NET.Sdk\\targets\\Microsoft.PackageDependencyResolution.targets",
+              "ViewState": "AgIAAPkAAAAAAAAAAAAkwAkBAAAEAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003801|",
+              "WhenOpened": "2025-03-28T09:52:51.975Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "MappingProfile.cs",
+              "DocumentMoniker": "C:\\Users\\2000147597\\Documents\\Roadready\\MappingProfile.cs",
+              "RelativeDocumentMoniker": "MappingProfile.cs",
+              "ToolTip": "C:\\Users\\2000147597\\Documents\\Roadready\\MappingProfile.cs",
+              "RelativeToolTip": "MappingProfile.cs",
+              "ViewState": "AgIAABwAAAAAAAAAAAAcwB4AAAAbAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-28T06:15:22.956Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
+              "Title": "RoadReady.AssemblyInfo.cs",
+              "DocumentMoniker": "C:\\Users\\2000147597\\Documents\\Roadready\\obj\\Debug\\net6.0\\RoadReady.AssemblyInfo.cs",
+              "RelativeDocumentMoniker": "obj\\Debug\\net6.0\\RoadReady.AssemblyInfo.cs",
+              "ToolTip": "C:\\Users\\2000147597\\Documents\\Roadready\\obj\\Debug\\net6.0\\RoadReady.AssemblyInfo.cs",
+              "RelativeToolTip": "obj\\Debug\\net6.0\\RoadReady.AssemblyInfo.cs",
+              "ViewState": "AgIAAAYAAAAAAAAAAADwvxMAAABBAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-28T06:44:05.49Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 18,
+              "Title": "ApplicationUser.cs",
+              "DocumentMoniker": "C:\\Users\\2000147597\\Documents\\Roadready\\Authentication\\ApplicationUser.cs",
+              "RelativeDocumentMoniker": "Authentication\\ApplicationUser.cs",
+              "ToolTip": "C:\\Users\\2000147597\\Documents\\Roadready\\Authentication\\ApplicationUser.cs",
+              "RelativeToolTip": "Authentication\\ApplicationUser.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-28T04:49:55.363Z"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{cce594b6-0c39-4442-ba28-10c64ac7e89f}"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

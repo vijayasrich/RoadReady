@@ -17,10 +17,10 @@ namespace RoadReady.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.35")
+                .HasAnnotation("ProductVersion", "8.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
+            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<int>", b =>
                 {
@@ -28,7 +28,7 @@ namespace RoadReady.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
@@ -58,7 +58,7 @@ namespace RoadReady.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ClaimType")
                         .HasColumnType("nvarchar(max)");
@@ -82,7 +82,7 @@ namespace RoadReady.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ClaimType")
                         .HasColumnType("nvarchar(max)");
@@ -178,7 +178,7 @@ namespace RoadReady.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
@@ -240,47 +240,6 @@ namespace RoadReady.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("RoadReady.Models.AdminDashboardData", b =>
-                {
-                    b.Property<int>("DashboardId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("dashboard_id");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DashboardId"), 1L, 1);
-
-                    b.Property<DateTime?>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasColumnName("created_at")
-                        .HasDefaultValueSql("(sysdatetime())");
-
-                    b.Property<int?>("TotalCars")
-                        .HasColumnType("int")
-                        .HasColumnName("total_cars");
-
-                    b.Property<int?>("TotalReservations")
-                        .HasColumnType("int")
-                        .HasColumnName("total_reservations");
-
-                    b.Property<decimal?>("TotalRevenue")
-                        .HasColumnType("decimal(10,2)")
-                        .HasColumnName("total_revenue");
-
-                    b.Property<int?>("TotalReviews")
-                        .HasColumnType("int")
-                        .HasColumnName("total_reviews");
-
-                    b.Property<int?>("TotalUsers")
-                        .HasColumnType("int")
-                        .HasColumnName("total_users");
-
-                    b.HasKey("DashboardId")
-                        .HasName("PK__AdminDas__5E2AEAE69B9D34E7");
-
-                    b.ToTable("AdminDashboardData");
-                });
-
             modelBuilder.Entity("RoadReady.Models.Car", b =>
                 {
                     b.Property<int>("CarId")
@@ -288,7 +247,7 @@ namespace RoadReady.Migrations
                         .HasColumnType("int")
                         .HasColumnName("car_id");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CarId"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CarId"));
 
                     b.Property<bool?>("Availability")
                         .ValueGeneratedOnAdd()
@@ -328,7 +287,7 @@ namespace RoadReady.Migrations
                         .HasColumnName("model");
 
                     b.Property<decimal?>("PricePerDay")
-                        .HasColumnType("decimal(10,2)")
+                        .HasColumnType("decimal(10, 2)")
                         .HasColumnName("price_per_day");
 
                     b.Property<DateTime?>("UpdatedAt")
@@ -353,7 +312,7 @@ namespace RoadReady.Migrations
                         .HasColumnType("int")
                         .HasColumnName("extra_id");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ExtraId"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ExtraId"));
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)")
@@ -365,7 +324,7 @@ namespace RoadReady.Migrations
                         .HasColumnName("name");
 
                     b.Property<decimal?>("Price")
-                        .HasColumnType("decimal(10,2)")
+                        .HasColumnType("decimal(10, 2)")
                         .HasColumnName("price");
 
                     b.HasKey("ExtraId")
@@ -380,7 +339,7 @@ namespace RoadReady.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ResetId"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ResetId"));
 
                     b.Property<DateTime>("ExpirationDate")
                         .HasColumnType("datetime")
@@ -413,10 +372,10 @@ namespace RoadReady.Migrations
                         .HasColumnType("int")
                         .HasColumnName("payment_id");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PaymentId"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PaymentId"));
 
                     b.Property<decimal>("Amount")
-                        .HasColumnType("decimal(10,2)")
+                        .HasColumnType("decimal(10, 2)")
                         .HasColumnName("amount");
 
                     b.Property<DateTime>("PaymentDate")
@@ -460,7 +419,7 @@ namespace RoadReady.Migrations
                         .HasColumnType("int")
                         .HasColumnName("reservation_id");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ReservationId"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ReservationId"));
 
                     b.Property<int>("CarId")
                         .HasColumnType("int")
@@ -488,7 +447,7 @@ namespace RoadReady.Migrations
                         .HasDefaultValueSql("('pending')");
 
                     b.Property<decimal>("TotalPrice")
-                        .HasColumnType("decimal(10,2)")
+                        .HasColumnType("decimal(10, 2)")
                         .HasColumnName("total_price");
 
                     b.Property<DateTime>("UpdatedAt")
@@ -517,7 +476,7 @@ namespace RoadReady.Migrations
                         .HasColumnType("int")
                         .HasColumnName("review_id");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ReviewId"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ReviewId"));
 
                     b.Property<int?>("CarId")
                         .HasColumnType("int")
@@ -557,7 +516,7 @@ namespace RoadReady.Migrations
                         .HasColumnType("int")
                         .HasColumnName("user_id");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserId"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserId"));
 
                     b.Property<DateTime?>("CreatedAt")
                         .ValueGeneratedOnAdd()

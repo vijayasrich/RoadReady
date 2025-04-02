@@ -39,7 +39,7 @@ namespace RoadReady.Controllers
 
        
         [HttpGet]
-        [Authorize(Roles = "Admin,Customer")]
+        [Authorize(Roles = "admin,customer")]
         public async Task<ActionResult<IEnumerable<ReviewsDTO>>> GetAllReviews()
         {
             try
@@ -62,7 +62,7 @@ namespace RoadReady.Controllers
 
        
         [HttpGet("ByCar/{carId}")]
-        [Authorize(Roles = "Admin,Customer")]
+        [Authorize(Roles = "admin,customer")]
         public async Task<ActionResult<ReviewsDTO>> GetReviewByCarId(int carId)
         {
             try
@@ -84,7 +84,7 @@ namespace RoadReady.Controllers
         }
 
         [HttpPost("addReview")]
-        [Authorize(Roles = "Customer")]
+        [Authorize(Roles = "customer")]
         public async Task<IActionResult> AddReview([FromBody] ReviewRequestDTO reviewRequest)
         {
             try

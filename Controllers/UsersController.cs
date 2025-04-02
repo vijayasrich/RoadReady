@@ -27,7 +27,7 @@ namespace RoadReady.Controllers
 
        
         [HttpGet]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")]    
         public async Task<IActionResult> GetAllUsers()
         {
             try
@@ -66,7 +66,7 @@ namespace RoadReady.Controllers
 
         
         [HttpGet("{id}")]
-        [Authorize(Roles = "Customer")]
+        [Authorize(Roles = "customer")]
         public async Task<IActionResult> GetUserById(int id)
         {
             try
@@ -103,7 +103,7 @@ namespace RoadReady.Controllers
 
        
         [HttpPost]
-        [Authorize(Roles = "Customer")]
+        [Authorize(Roles = "customer")]
         public async Task<IActionResult> CreateUser([FromBody] Models.DTO.UserDTO userDto)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -125,7 +125,7 @@ namespace RoadReady.Controllers
 
        
         [HttpPut("{id}")]
-        [Authorize(Roles = "Customer")]
+        [Authorize(Roles = "customer")]
         public async Task<IActionResult> UpdateUser(int id, [FromBody] Models.DTO.UserDTO userDto)
         {
             if (id != userDto.UserId) return BadRequest("User ID mismatch.");

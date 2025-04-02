@@ -12,7 +12,7 @@ namespace RoadReady.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Admin,Customer,Agent")]
+    [Authorize(Roles = "admin,customer")]
     public class ReservationsController : ControllerBase
     {
         private readonly IReservationRepository _reservationRepository;
@@ -31,7 +31,7 @@ namespace RoadReady.Controllers
         }
         
         [HttpGet("all/{userId}")]
-        [Authorize(Roles = "Customer")]
+        [Authorize(Roles = "customer")]
         public async Task<IActionResult> GetReservationsByUserId(int userId)
         {
             try
@@ -104,7 +104,7 @@ namespace RoadReady.Controllers
        
 
         [HttpGet]
-        [Authorize(Roles = "Admin")] 
+        [Authorize(Roles = "admin")] 
         public async Task<ActionResult<IEnumerable<ReservationDTO>>> GetAllReservations()
         {
             var reservations = await _context.Reservations
@@ -136,7 +136,7 @@ namespace RoadReady.Controllers
 
 
         [HttpGet("{id}")]
-        [Authorize(Roles = "Customer")]
+        [Authorize(Roles = "customer")]
         public async Task<ActionResult<ReservationDTO>> GetReservationById(int id)
         {
             try
@@ -158,8 +158,8 @@ namespace RoadReady.Controllers
             }
         }
 
-        [HttpPost]
-        [Authorize(Roles = "Customer")] // Only Customer can add reservations
+        [HttpPost]  
+        [Authorize(Roles = "customer")] // Only Customer can add reservations
         public async Task<IActionResult> AddReservation([FromBody] CreateReservationDTO reservationDTO)
         {
             if (reservationDTO == null)
@@ -215,7 +215,7 @@ namespace RoadReady.Controllers
 
 
         [HttpPut("{id}/status")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> UpdateReservationStatus(int id, [FromBody] UpdateReservationStatusDTO statusDTO)
         {
             try
@@ -243,7 +243,7 @@ namespace RoadReady.Controllers
         }
         
         [HttpDelete("cancel/{id}")]
-        [Authorize(Roles = "Customer")]
+        [Authorize(Roles = "customer")]
         public async Task<IActionResult> CancelReservation(int id)
         {
             try
@@ -276,7 +276,7 @@ namespace RoadReady.Controllers
 
 
     [HttpDelete("{id}")]
-        [Authorize(Roles = "Admin,Customer")] 
+        [Authorize(Roles = "admin,customer")] 
         public async Task<IActionResult> DeleteReservation(int id)
         {
             try

@@ -24,7 +24,7 @@ namespace RoadReady.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Admin,Customer")]
+        [Authorize]
         public IActionResult GetAllCarExtras()
         {
             try
@@ -44,7 +44,7 @@ namespace RoadReady.Controllers
         }
 
         [HttpGet("{id}")]
-        [Authorize(Roles = "Admin,Customer")]
+        [Authorize(Roles = "admin,customer")]
         public IActionResult GetCarExtraById(int id)
         {
             try
@@ -71,7 +71,7 @@ namespace RoadReady.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")]
         public IActionResult AddCarExtra([FromBody] CreateCarExtraDTO createCarExtraDto)
         {
             if (!ModelState.IsValid)
@@ -101,10 +101,10 @@ namespace RoadReady.Controllers
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, new { message = "An unexpected error occurred.", details = ex.Message });
             }
-        }
+        }   
 
         [HttpPut("{id}")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")]
         public IActionResult UpdateCarExtra(int id, [FromBody] UpdateCarExtraDTO updateCarExtraDto)
         {
             if (id != updateCarExtraDto.ExtraId)
@@ -136,7 +136,7 @@ namespace RoadReady.Controllers
         }
 
         [HttpDelete("{id}")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")]
         public IActionResult DeleteCarExtra(int id)
         {
             try
